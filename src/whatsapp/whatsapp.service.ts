@@ -121,12 +121,12 @@ export class WhatsappService {
         const image = message.image;
         const mediaId = image.id;
         const caption = image.caption || '';
-        
+
         try {
           const mediaUrl = await this.downloadWhatsappMedia(org, mediaId);
           savedBody = caption || '📷 Imagen';
           messageTypeForDb = 'image';
-          
+
           const createdMessage = await this.prisma.message.create({
             data: {
               body: savedBody,
@@ -137,9 +137,9 @@ export class WhatsappService {
               contactId: contact.id
             }
           });
-          
+
           this.chatGateway.emitNewMessage(createdMessage);
-          
+
           // Auto-reply for images too? Maybe just skip for now to avoid loops
           return createdMessage;
         } catch (err) {
@@ -203,7 +203,7 @@ export class WhatsappService {
         where: { id: contactId },
         include: { Organization: true }
       });
-      
+
       if (!contact) throw new NotFoundException('Contacto no encontrado');
       const org = contact.Organization;
 
@@ -214,7 +214,7 @@ export class WhatsappService {
       const decryptedToken = decrypt(org.whatsappToken);
 
       const url = `https://graph.facebook.com/v19.0/${org.whatsappPhoneId}/messages`;
-      
+
       const payload: any = {
         messaging_product: 'whatsapp',
         to: contact.phoneNumber,
@@ -270,17 +270,13 @@ export class WhatsappService {
 
     // 1. Enviar las imágenes detectadas por la IA
     const apiUrl = process.env.API_URL || 'http://localhost:3000';
-    
+
     for (let url of imageUrls) {
       const baseUrl = process.env.API_URL || 'http://localhost:3000';
       if (url.includes('localhost:3000')) {
-<<<<<<< HEAD
-        url = url.replace('localhost:3000', apiUrl.replace('http://', '').replace('https://', ''));
-=======
         url = url.replace('localhost:3000', baseUrl.replace('http://', '').replace('https://', ''));
->>>>>>> 578d20dbc11e6b91e8669b7c0c8649943e9f8c19
       }
-      
+
       try {
         await this.sendMessage(contactId, '', 'image', url);
       } catch (imgError) {
@@ -301,7 +297,7 @@ export class WhatsappService {
     );
 
     const isInRange = distanceKm <= this.DELIVERY_CENTER.radiusKm;
-    
+
     const locationContext = isInRange
       ? `[SISTEMA: El cliente está a ${distanceKm.toFixed(1)} km. SÍ hay cobertura. Procesa el pedido.]`
       : `[SISTEMA: El cliente está a ${distanceKm.toFixed(1)} km. NO hay cobertura. Sugiere recojo en tienda.]`;
@@ -383,13 +379,13 @@ export class WhatsappService {
 
   private async downloadWhatsappMedia(org: any, mediaId: string): Promise<string> {
     const decryptedToken = decrypt(org.whatsappToken);
-    
+
     // 1. Obtener URL de descarga
     const response = await fetch(`https://graph.facebook.com/v19.0/${mediaId}`, {
       headers: { 'Authorization': `Bearer ${decryptedToken}` }
     });
     const mediaData = await response.json();
-    
+
     if (!response.ok || !mediaData.url) {
       throw new Error(`Error obteniendo URL de media: ${mediaData.error?.message || 'URL no encontrada'}`);
     }
@@ -398,7 +394,7 @@ export class WhatsappService {
     const fileResponse = await fetch(mediaData.url, {
       headers: { 'Authorization': `Bearer ${decryptedToken}` }
     });
-    
+
     if (!fileResponse.ok) {
       throw new Error('Error descargando el archivo de los servidores de Meta');
     }
@@ -406,16 +402,11 @@ export class WhatsappService {
     const buffer = await fileResponse.arrayBuffer();
     const fileName = `${Date.now()}-${mediaId}.${mediaData.mime_type.split('/')[1]}`;
     const filePath = path.join(process.cwd(), 'public', 'uploads', fileName);
-    
+
     fs.writeFileSync(filePath, Buffer.from(buffer));
-    
-<<<<<<< HEAD
-    const apiUrl = process.env.API_URL || 'http://localhost:3000';
-    return `${apiUrl}/uploads/${fileName}`;
-=======
+
     const baseUrl = process.env.API_URL || 'http://localhost:3000';
     return `${baseUrl}/uploads/${fileName}`;
->>>>>>> 578d20dbc11e6b91e8669b7c0c8649943e9f8c19
   }
 
   private toRad(deg: number): number {
