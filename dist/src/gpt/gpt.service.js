@@ -50,65 +50,106 @@ exports.GptService = void 0;
 const common_1 = require("@nestjs/common");
 const openai_1 = __importDefault(require("openai"));
 const prisma_service_1 = require("../prisma/prisma.service");
+const products_service_1 = require("../products/products.service");
+const prompts_service_1 = require("../prompts/prompts.service");
+const categories_service_1 = require("../categories/categories.service");
 const dotenv = __importStar(require("dotenv"));
 dotenv.config();
 let GptService = GptService_1 = class GptService {
     prisma;
+    productsService;
+    promptsService;
+    categoriesService;
     logger = new common_1.Logger(GptService_1.name);
-    openai;
-    SYSTEM_PROMPT = `
-Eres un asistente de ventas por WhatsApp. Tu objetivo es ayudar a los clientes a comprar productos de forma clara, amable y eficiente.
+    DEFAULT_SYSTEM_PROMPT = `
+Eres un asistente de ventas experto y amable. Tu objetivo es guiar al cliente por nuestro catálogo de forma progresiva y natural.
 
-Reglas importantes:
+ FLUJO DE CONVERSACIÓN:
+1. INICIO: Saluda y pregunta qué tipo de productos buscan, citando las CATEGORÍAS disponibles.
+2. INTERÉS EN CATEGORÍA: Si mencionan una categoría, lista las SUBCATEGORÍAS que pertenecen a ella para ayudarles a filtrar.
+3. INTERÉS EN SUBCATEGORÍA: Si mencionan una subcategoría, muestra el listado de PRODUCTOS disponibles con sus precios.
+4. SALTO DIRECTO: Si el cliente pregunta directamente por un producto o subcategoría, responde directamente con la información, sin forzar los pasos previos.
 
-* SOLO puedes ofrecer estos productos:
+REGLAS DE ORO:
+- NO menciones las palabras técnicas "Categoría" o "Subcategoría" al cliente. Solo cita sus nombres (ej: "Tenemos productos capilares y electrodomésticos" en lugar de "Nuestras categorías son...").
+- Mantén las respuestas breves, usa emojis y tono de WhatsApp.
+- SOLO OFRECE LO QUE APARECE EN EL LISTADO DE ABAJO.
+- ENVÍO DE FOTOS (CRÍTICO): Si mencionas un producto que tiene [IMAGEN DISPONIBLE], DEBES copiar exactamente su TAG_DE_IMAGEN al final de tu mensaje. 
+- EJEMPLO: Si el catálogo dice "TAG_DE_IMAGEN: [ID: 123-abc]", tú debes escribir "[ID: 123-abc]" al final. 
+- NUNCA escribas "[ID: uuid-del-producto]", usa siempre el código alfanumérico real del catálogo.
+- Si el cliente te pide una foto y no hay imagen disponible, explica amablemente que no tienes la foto en este momento.
 
-  * Magnesio 100g: 100 Bs
-  * Magnesio 150mg: 130 Bs
-* NO inventes productos, precios ni información adicional.
-* Responde siempre en español, a menos que el cliente pida explícitamente inglés.
-* Usa un tono amigable, cercano y profesional.
-* Las respuestas deben ser breves, claras y naturales, como mensajes de WhatsApp.
 
-Flujo de venta obligatorio:
-
-1. Saluda y ofrece los productos disponibles con sus precios.
-2. Cuando el cliente elija un producto, confirma su elección.
-3. Luego pregunta:
-   “¿Prefieres entrega a domicilio o recoger en punto de la ciudad?”
-4. Si elige punto de la ciudad, indica:
-   “La entrega es frente a las oficinas de correos en la calle Ayacucho, Cochabamba.”
-5. Si elige entrega a domicilio:
-
-   * Pide su ubicación.
-   * Indica que verificarás si está dentro del área de cobertura.
-6. Una vez confirmada la entrega (domicilio o punto), cierra la venta de forma cordial.
-
-Ejemplo de cierre:
-“Perfecto 😊 Tu pedido está confirmado. Gracias por tu compra, cualquier consulta estoy aquí para ayudarte.”
-
-Nunca salgas de este flujo y mantén siempre respuestas concisas.
+INSTRUCIONES / CATÁLOGO (Uso interno para ti):
+{{productos}}
 `.trim();
-    constructor(prisma) {
+    constructor(prisma, productsService, promptsService, categoriesService) {
         this.prisma = prisma;
-        const apiKey = process.env.OPENAI_API_KEY;
-        if (!apiKey || apiKey === 'PEGA_TU_API_KEY_AQUI') {
-            this.logger.warn('⚠️ OPENAI_API_KEY no configurada. El bot de IA no funcionará.');
-        }
-        else {
-            this.logger.log(`✅ OpenAI configurado (key: ${apiKey.substring(0, 8)}...)`);
-        }
-        this.openai = new openai_1.default({ apiKey: apiKey || '' });
+        this.productsService = productsService;
+        this.promptsService = promptsService;
+        this.categoriesService = categoriesService;
     }
-    async generateReply(contactId, latestMessageBody) {
+    async generateReply(contactId, latestMessageBody, apiKey, orgId) {
         try {
+            if (!apiKey) {
+                this.logger.error('❌ No se proporcionó API Key de OpenAI.');
+                return { text: 'Disculpa, no pude procesar tu mensaje. Un agente te atenderá pronto.', imageUrls: [] };
+            }
+            const openai = new openai_1.default({ apiKey: apiKey.trim() });
+            const customPrompt = await this.promptsService.getActivePrompt(orgId);
+            let systemInstruction = customPrompt?.content || this.DEFAULT_SYSTEM_PROMPT;
+            const categories = await this.categoriesService.findAll(orgId);
+            const allActiveProducts = await this.productsService.findAllActiveForGpt(orgId);
+            const subcategories = await this.prisma.subcategory.findMany({ where: { organizationId: orgId } });
+            let catalogTree = '';
+            const categoryNames = categories.map(c => c.name).join(', ');
+            const subcategoryNames = subcategories.map(s => s.name).join(', ');
+            if (categories.length === 0) {
+                catalogTree = 'No hay categorías configuradas aún.';
+            }
+            else {
+                for (const cat of categories) {
+                    catalogTree += `\n* CATEGORÍA: ${cat.name}\n`;
+                    const catProducts = allActiveProducts.filter(p => p.Subcategory?.categoryId === cat.id);
+                    const subMap = new Map();
+                    for (const p of catProducts) {
+                        const subName = p.Subcategory?.name || 'Otros';
+                        if (!subMap.has(subName))
+                            subMap.set(subName, []);
+                        subMap.get(subName)?.push(p);
+                    }
+                    if (subMap.size === 0) {
+                        catalogTree += `  (Próximamente productos en esta categoría)\n`;
+                    }
+                    else {
+                        for (const [subName, products] of subMap.entries()) {
+                            catalogTree += `  - SUBCATEGORÍA: ${subName}\n`;
+                            for (const p of products) {
+                                const imgStatus = !!p.imageUrl ? '[FOTO_DISPONIBLE]' : '[SIN_FOTO]';
+                                catalogTree += `    ● PRODUCTO: ${p.name} | PRECIO: ${p.price} ${p.currency} | (ID: ${p.id}) | ${imgStatus}\n`;
+                            }
+                        }
+                    }
+                }
+            }
+            const replacements = {
+                '{{productos}}': catalogTree.trim(),
+                '{{products}}': catalogTree.trim(),
+                '{{categorias}}': categoryNames || 'Ninguna',
+                '{{categories}}': categoryNames || 'None',
+                '{{subcategorias}}': subcategoryNames || 'Ninguna',
+                '{{subcategories}}': subcategoryNames || 'None'
+            };
+            for (const [key, value] of Object.entries(replacements)) {
+                systemInstruction = systemInstruction.replaceAll(key, value);
+            }
             const recentMessages = await this.prisma.message.findMany({
                 where: { contactId },
                 orderBy: { createdAt: 'asc' },
                 take: 15,
             });
             const conversationHistory = [
-                { role: 'system', content: this.SYSTEM_PROMPT },
+                { role: 'system', content: systemInstruction },
             ];
             for (const msg of recentMessages) {
                 conversationHistory.push({
@@ -118,40 +159,88 @@ Nunca salgas de este flujo y mantén siempre respuestas concisas.
             }
             const lastInHistory = recentMessages[recentMessages.length - 1];
             if (!lastInHistory || lastInHistory.body !== latestMessageBody) {
+                conversationHistory.push({ role: 'user', content: latestMessageBody });
+            }
+            const productsWithImages = allActiveProducts.filter(p => !!p.imageUrl);
+            const idDescriptions = productsWithImages
+                .map(p => `"${p.id}" = ${p.name}`)
+                .join(', ');
+            const validIds = productsWithImages.map(p => p.id);
+            this.logger.log(`📸 Productos con foto disponibles: ${validIds.length}`);
+            for (const p of productsWithImages) {
+                this.logger.log(`  ✅ ${p.name} → ${p.id}`);
+            }
+            const tools = validIds.length > 0 ? [
+                {
+                    type: 'function',
+                    function: {
+                        name: 'mostrar_imagen_producto',
+                        description: `Envía la foto de un producto al cliente. Los productos disponibles son: ${idDescriptions}`,
+                        parameters: {
+                            type: 'object',
+                            properties: {
+                                productId: {
+                                    type: 'string',
+                                    enum: validIds,
+                                    description: `ID del producto. Valores válidos: ${idDescriptions}`
+                                }
+                            },
+                            required: ['productId']
+                        }
+                    }
+                }
+            ] : [];
+            if (validIds.length > 0) {
                 conversationHistory.push({
-                    role: 'user',
-                    content: latestMessageBody,
+                    role: 'system',
+                    content: `Cuando el cliente pida ver la foto de un producto, usa la herramienta "mostrar_imagen_producto". Responde siempre con texto amigable además de usar la herramienta.`
                 });
             }
-            this.logger.log(`🤖 Enviando ${conversationHistory.length} mensajes a OpenAI para contacto ${contactId}`);
-            const completion = await this.openai.chat.completions.create({
+            const completion = await openai.chat.completions.create({
                 model: 'gpt-4o-mini',
                 messages: conversationHistory,
-                max_tokens: 300,
+                max_tokens: 500,
                 temperature: 0.7,
+                ...(tools.length > 0 ? { tools } : {})
             });
-            const reply = completion.choices[0]?.message?.content?.trim();
-            if (!reply) {
-                this.logger.warn('OpenAI devolvió una respuesta vacía');
-                return 'Disculpa, no pude procesar tu mensaje. Un agente te atenderá pronto.';
+            const message = completion.choices[0]?.message;
+            const imageUrls = [];
+            if (message?.tool_calls) {
+                for (const toolCall of message.tool_calls) {
+                    const tc = toolCall;
+                    if (tc.function?.name === 'mostrar_imagen_producto') {
+                        const { productId } = JSON.parse(tc.function.arguments);
+                        const product = await this.prisma.product.findUnique({ where: { id: productId } });
+                        if (product?.imageUrl) {
+                            imageUrls.push(product.imageUrl);
+                        }
+                    }
+                }
             }
-            this.logger.log(`✅ Respuesta de GPT generada (${reply.length} chars)`);
-            return reply;
+            let replyText = completion.choices[0]?.message?.content?.trim();
+            if (!replyText && imageUrls.length > 0) {
+                replyText = '¡Claro! Aquí tienes la foto:';
+            }
+            return {
+                text: replyText || 'Un agente te ayudará pronto.',
+                imageUrls
+            };
         }
         catch (error) {
-            this.logger.error(`❌ Error llamando a OpenAI:`);
-            this.logger.error(`   Status: ${error.status || 'N/A'}`);
-            this.logger.error(`   Message: ${error.message}`);
-            if (error.error) {
-                this.logger.error(`   OpenAI Error: ${JSON.stringify(error.error)}`);
-            }
-            return 'Lo siento, tuve un problema técnico. Un agente humano te ayudará en breve.';
+            this.logger.error(`❌ Error en GptService: ${error.message}`, error.stack);
+            return {
+                text: `Error técnico: ${error.message}. Por favor contacta a soporte.`,
+                imageUrls: []
+            };
         }
     }
 };
 exports.GptService = GptService;
 exports.GptService = GptService = GptService_1 = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService,
+        products_service_1.ProductsService,
+        prompts_service_1.PromptsService,
+        categories_service_1.CategoriesService])
 ], GptService);
 //# sourceMappingURL=gpt.service.js.map

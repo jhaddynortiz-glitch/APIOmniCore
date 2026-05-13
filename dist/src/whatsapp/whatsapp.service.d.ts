@@ -8,27 +8,32 @@ export declare class WhatsappService {
     private readonly logger;
     private readonly DELIVERY_CENTER;
     constructor(prisma: PrismaService, chatGateway: ChatGateway, gptService: GptService);
+    verifyWebhookToken(token: string): Promise<boolean>;
     processWebhook(body: any): Promise<{
         id: string;
         createdAt: Date;
         body: string | null;
+        mediaUrl: string | null;
+        mimeType: string | null;
         isFromMe: boolean;
         type: string;
         contactId: string;
     } | undefined>;
-    getContacts(): Promise<({
+    getContacts(organizationId: string): Promise<({
         messages: {
             id: string;
             createdAt: Date;
             body: string | null;
+            mediaUrl: string | null;
+            mimeType: string | null;
             isFromMe: boolean;
             type: string;
             contactId: string;
         }[];
     } & {
         id: string;
-        name: string | null;
         createdAt: Date;
+        name: string | null;
         organizationId: string;
         phoneNumber: string;
         unreadCount: number;
@@ -37,40 +42,47 @@ export declare class WhatsappService {
         id: string;
         createdAt: Date;
         body: string | null;
+        mediaUrl: string | null;
+        mimeType: string | null;
         isFromMe: boolean;
         type: string;
         contactId: string;
     }[]>;
-    sendMessage(contactId: string, bodyText: string): Promise<{
+    sendMessage(contactId: string, bodyText: string, type?: string, mediaUrl?: string): Promise<{
         id: string;
         createdAt: Date;
         body: string | null;
+        mediaUrl: string | null;
+        mimeType: string | null;
         isFromMe: boolean;
         type: string;
         contactId: string;
     }>;
+    private autoReplyWithGpt;
+    private autoReplyWithLocation;
+    private calculateDistance;
     markContactAsRead(contactId: string): Promise<{
         success: boolean;
     }>;
-    createContact(name: string, phoneNumber: string): Promise<{
+    createContact(name: string, phoneNumber: string, organizationId?: string): Promise<{
         messages: {
             id: string;
             createdAt: Date;
             body: string | null;
+            mediaUrl: string | null;
+            mimeType: string | null;
             isFromMe: boolean;
             type: string;
             contactId: string;
         }[];
     } & {
         id: string;
-        name: string | null;
         createdAt: Date;
+        name: string | null;
         organizationId: string;
         phoneNumber: string;
         unreadCount: number;
     }>;
-    private autoReplyWithGpt;
-    private autoReplyWithLocation;
-    private calculateDistance;
+    private downloadWhatsappMedia;
     private toRad;
 }

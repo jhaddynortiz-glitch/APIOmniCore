@@ -1,5 +1,6 @@
-import { Controller, Post, Body, Get, Param, Query, HttpException, HttpStatus, Logger } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Query, HttpException, HttpStatus, Logger, UseGuards, Request } from '@nestjs/common';
 import { WhatsappService } from './whatsapp.service';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('whatsapp')
 export class WhatsappController {
@@ -8,18 +9,22 @@ export class WhatsappController {
 
   constructor(private readonly whatsappService: WhatsappService) {}
 
+  // --- Webhooks (públicos, Meta los llama sin auth) ---
+
   @Get('webhook')
-  verifyWebhook(
+  async verifyWebhook(
     @Query('hub.mode') mode: string, 
     @Query('hub.verify_token') token: string, 
     @Query('hub.challenge') challenge: string
   ) {
-    // Este token secreto lo inventamos nosotros, luego lo pegaremos en Meta
-    const verifyToken = process.env.WHATSAPP_VERIFY_TOKEN || 'omnicore_secreto_2026';
+    if (mode !== 'subscribe') {
+      throw new HttpException('Modo inválido', HttpStatus.FORBIDDEN);
+    }
+
+    const isValid = await this.whatsappService.verifyWebhookToken(token);
     
-    if (mode === 'subscribe' && token === verifyToken) {
+    if (isValid) {
       this.logger.log('✅ Webhook verificado por Meta!');
-      // Meta exige que devolvamos el challenge en formato texto puro
       return challenge;
     }
     
@@ -28,28 +33,37 @@ export class WhatsappController {
 
   @Post('webhook')
   async handleWebhook(@Body() body: any) {
-    // Procesamos y guardamos usando el servicio (Prisma)
-    await this.whatsappService.processWebhook(body);
-    
-    // Respondemos a WhatsApp / Postman que lo recibimos correctamente
-    return { status: 'success', message: 'Webhook procesado y simulado correctamente' };
+    this.logger.log('📩 Webhook recibido desde Meta');
+
+    try {
+      await this.whatsappService.processWebhook(body);
+      return { status: 'success', message: 'Webhook procesado correctamente' };
+    } catch (error) {
+      this.logger.error('❌ Error procesando webhook:', error.message);
+      throw new HttpException('Error interno procesando webhook', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
-  // Endpoints para CMS (Angular)
+  // --- Endpoints protegidos (CMS Angular) ---
+  // Todos filtran por la organización activa del JWT
   
+  @UseGuards(JwtAuthGuard)
   @Get('contacts')
-  async getContacts() {
-    return await this.whatsappService.getContacts();
+  async getContacts(@Request() req: any) {
+    return await this.whatsappService.getContacts(req.user.orgId);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('contacts')
   async createContact(
+    @Request() req: any,
     @Body('name') name: string,
     @Body('phoneNumber') phoneNumber: string
   ) {
-    return await this.whatsappService.createContact(name, phoneNumber);
+    return await this.whatsappService.createContact(name, phoneNumber, req.user.orgId);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('messages/:contactId')
   async getMessages(
     @Param('contactId') contactId: string,
@@ -59,17 +73,20 @@ export class WhatsappController {
     return await this.whatsappService.getMessages(contactId, limit, cursor);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('messages/:contactId')
   async sendMessage(
     @Param('contactId') contactId: string, 
-    @Body('text') text: string
+    @Body('text') text: string,
+    @Body('type') type?: string,
+    @Body('mediaUrl') mediaUrl?: string
   ) {
-    return await this.whatsappService.sendMessage(contactId, text);
+    return await this.whatsappService.sendMessage(contactId, text, type, mediaUrl);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('contacts/:contactId/read')
   async markAsRead(@Param('contactId') contactId: string) {
     return await this.whatsappService.markContactAsRead(contactId);
   }
-
 }

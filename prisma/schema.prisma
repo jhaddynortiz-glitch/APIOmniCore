@@ -23,6 +23,8 @@ model Contact {
 model Message {
   id        String   @id @default(uuid())
   body      String?
+  mediaUrl  String?
+  mimeType  String?
   isFromMe  Boolean  @default(false)
   type      String   @default("text")
   contactId String
@@ -33,20 +35,99 @@ model Message {
 }
 
 model Organization {
-  id        String    @id
-  name      String
-  slug      String    @unique
-  createdAt DateTime  @default(now())
-  Contact   Contact[]
-  User      User[]
+  id                  String             @id
+  name                String
+  slug                String             @unique
+  whatsappToken       String?
+  whatsappPhoneId     String?
+  whatsappVerifyToken String?
+  openaiApiKey        String?
+  googleClientId      String?
+  googleClientSecret  String?
+  createdAt           DateTime           @default(now())
+  Contact             Contact[]
+  users               UserOrganization[]
+  products            Product[]
+  prompts             Prompt[]
+  categories          Category[]
+  subcategories       Subcategory[]
 }
 
 model User {
-  id             String       @id
-  email          String       @unique
-  fullName       String?
-  role           String       @default("vendedor")
+  id                         String             @id @default(uuid())
+  email                      String             @unique
+  password                   String?
+  googleId                   String?            @unique
+  fullName                   String?
+  avatarUrl                  String?
+  globalRole                 String             @default("NONE")
+  lastActiveOrganizationId   String?
+  createdAt                  DateTime           @default(now())
+  organizations              UserOrganization[]
+}
+
+model Category {
+  id             String        @id @default(uuid())
+  name           String
   organizationId String
-  createdAt      DateTime     @default(now())
+  Organization   Organization  @relation(fields: [organizationId], references: [id])
+  subcategories  Subcategory[]
+  createdAt      DateTime      @default(now())
+
+  @@index([organizationId])
+}
+
+model Subcategory {
+  id             String       @id @default(uuid())
+  name           String
+  categoryId     String
+  organizationId String
+  Category       Category     @relation(fields: [categoryId], references: [id])
   Organization   Organization @relation(fields: [organizationId], references: [id])
+  products       Product[]
+  createdAt      DateTime     @default(now())
+
+  @@index([organizationId])
+}
+
+model Product {
+  id             String       @id @default(uuid())
+  name           String
+  description    String?
+  price          Float
+  imageUrl       String?
+  currency       String       @default("Bs")
+  stock          Int          @default(0)
+  isActive       Boolean      @default(true)
+  subcategoryId  String?
+  Subcategory    Subcategory? @relation(fields: [subcategoryId], references: [id])
+  organizationId String
+  Organization   Organization @relation(fields: [organizationId], references: [id])
+  createdAt      DateTime     @default(now())
+
+  @@index([organizationId])
+}
+
+model Prompt {
+  id             String       @id @default(uuid())
+  name           String
+  content        String
+  isActive       Boolean      @default(false)
+  organizationId String
+  Organization   Organization @relation(fields: [organizationId], references: [id])
+  createdAt      DateTime     @default(now())
+
+  @@index([organizationId])
+}
+
+model UserOrganization {
+  userId         String
+  organizationId String
+  role           String       @default("editor")
+  status         String       @default("active")
+  createdAt      DateTime     @default(now())
+  User           User         @relation(fields: [userId], references: [id])
+  Organization   Organization @relation(fields: [organizationId], references: [id])
+
+  @@id([userId, organizationId])
 }

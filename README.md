@@ -63,7 +63,7 @@ Para que WhatsApp (Meta) pueda enviar notificaciones a tu máquina local, necesi
 - `src/websockets`: Gateway para comunicación en tiempo real con el frontend.
 - `prisma/schema.prisma`: Definición del modelo de datos (Contactos, Mensajes, Organizaciones).
 
-## 🧪 Tests
+## 🧪 Tests No para levantar en local
 
 ```bash
 # Unitarios

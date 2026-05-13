@@ -34,82 +34,86 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 const client_1 = require("@prisma/client");
-const pg_1 = require("pg");
-const adapter_pg_1 = require("@prisma/adapter-pg");
-const dotenv = __importStar(require("dotenv"));
-dotenv.config();
-const connectionString = process.env.DATABASE_URL;
-const pool = new pg_1.Pool({ connectionString });
-const adapter = new adapter_pg_1.PrismaPg(pool);
-const prisma = new client_1.PrismaClient({ adapter });
+const bcrypt = __importStar(require("bcrypt"));
+const crypto = __importStar(require("crypto"));
+require("dotenv/config");
+const prisma = new client_1.PrismaClient();
+function encrypt(text) {
+    const ALGORITHM = 'aes-256-cbc';
+    const ENCRYPTION_KEY = process.env.CRYPTO_KEY || 'omnicore_secure_32_byte_key_auth';
+    const IV_LENGTH = 16;
+    if (!text)
+        return text;
+    const iv = crypto.randomBytes(IV_LENGTH);
+    const cipher = crypto.createCipheriv(ALGORITHM, Buffer.from(ENCRYPTION_KEY), iv);
+    let encrypted = cipher.update(text);
+    encrypted = Buffer.concat([encrypted, cipher.final()]);
+    return iv.toString('hex') + ':' + encrypted.toString('hex');
+}
 async function main() {
-    console.log('Iniciando el proceso de seeding (población de datos)...');
-    const organization = await prisma.organization.upsert({
-        where: { slug: 'omnicore-demo' },
-        update: {},
-        create: {
-            id: 'org_demo_1',
-            name: 'OmniCore Demo Company',
-            slug: 'omnicore-demo',
-        },
-    });
-    console.log(`✅ Organización creada: ${organization.name}`);
+    console.log('🌱 Iniciando seeding...');
+    const hashedPassword = await bcrypt.hash('password123', 10);
     const user = await prisma.user.upsert({
-        where: { email: 'agente@omnicore.com' },
+        where: { email: 'jhaddynortiz@gmail.com' },
         update: {},
         create: {
-            id: 'usr_agent_1',
-            email: 'agente@omnicore.com',
-            fullName: 'Agente de Ventas 1',
-            role: 'vendedor',
-            organizationId: organization.id,
+            email: 'jhaddynortiz@gmail.com',
+            password: hashedPassword,
+            fullName: 'Jhaddyn Ortiz',
         },
     });
-    console.log(`✅ Usuario creado: ${user.email}`);
-    const contactsData = [
-        { phone: '5215551234567', name: 'Laura Martinez' },
-        { phone: '5491119876543', name: 'Carlos Gomez' },
-        { phone: '34600112233', name: 'Miguel Torres' },
-        { phone: '573009998877', name: 'Ana Silva' }
-    ];
-    for (const contactData of contactsData) {
-        const contact = await prisma.contact.upsert({
-            where: {
-                organizationId_phoneNumber: {
-                    organizationId: organization.id,
-                    phoneNumber: contactData.phone,
-                },
-            },
-            update: {},
-            create: {
-                phoneNumber: contactData.phone,
-                name: contactData.name,
-                organizationId: organization.id,
-            },
-        });
-        console.log(`✅ Contacto creado: ${contact.name} (${contact.phoneNumber})`);
-        await prisma.message.createMany({
-            data: [
-                {
-                    body: 'Hola, me gustaría información sobre el CRM.',
-                    isFromMe: false,
-                    type: 'text',
-                    contactId: contact.id,
-                },
-                {
-                    body: `¡Hola ${contact.name}! Claro, un agente te atenderá en seguida.`,
-                    isFromMe: true,
-                    type: 'text',
-                    contactId: contact.id,
-                },
-            ]
-        });
-    }
-    console.log('🎉 ¡Base de datos poblada exitosamente!');
+    console.log(`👤 Usuario creado/encontrado: ${user.email}`);
+    const orizon = await prisma.organization.upsert({
+        where: { id: 'orizon' },
+        update: {},
+        create: {
+            id: 'orizon',
+            name: 'Orizon',
+            slug: 'orizon',
+            whatsappToken: encrypt('EAASAjefbk5ABRHD6epeHYcZAGqdoRBvo7jwK5AZAENZAimrUPZCMXSNLBxir9UfxPZAQRjFh4ZB2KIyrHiioQrTo1RKrJ8cAETeZAh48oKPvjC2XTUWYSe339SeQ1IE7MT6msN4oA2jGQZBqHQ1AdjqFdDGO4bGr3GqDpVjhAACXZCvt6V3I6OY3fe6QFyceTZC44tKi9BVHSh57grkXT0nxVVPzyaargUCVAiZAIEPQb8L'),
+            whatsappPhoneId: '1108021955722585',
+            openaiApiKey: encrypt('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'),
+            whatsappVerifyToken: 'omnicore_secreto_2026',
+        },
+    });
+    console.log('🏢 Organización Orizon lista.');
+    const camver = await prisma.organization.upsert({
+        where: { id: 'camver' },
+        update: {},
+        create: {
+            id: 'camver',
+            name: 'Camver',
+            slug: 'camver',
+            whatsappToken: encrypt('EAAeNt4Hl6oABRH8BEoA1PClCeUTWQXSYotZATrbdYFPCmO8r0B4Ym7wR34qnGpyvrcWNWvY803YTWRNxspT8o9slje3ZB9xi4d7ueWBhRfPxFSp6FVNNo8WGi403lbAhxnrusOBkX3Kl4qukF7yx22oYRL5Av0mmGbMbhurZCovuycIzz70ZCiCW7kQjNWEZALgZDZD'),
+            whatsappPhoneId: '998199260052404',
+            openaiApiKey: encrypt('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'),
+            whatsappVerifyToken: 'omnicore_secreto_2026',
+        },
+    });
+    console.log('🏢 Organización Camver lista.');
+    await prisma.userOrganization.upsert({
+        where: { userId_organizationId: { userId: user.id, organizationId: orizon.id } },
+        update: { role: 'super-admin' },
+        create: {
+            userId: user.id,
+            organizationId: orizon.id,
+            role: 'super-admin',
+        },
+    });
+    await prisma.userOrganization.upsert({
+        where: { userId_organizationId: { userId: user.id, organizationId: camver.id } },
+        update: { role: 'super-admin' },
+        create: {
+            userId: user.id,
+            organizationId: camver.id,
+            role: 'super-admin',
+        },
+    });
+    console.log('✅ Seeding completado con éxito.');
 }
 main()
     .catch((e) => {
-    console.error(e);
+    console.error('❌ Error en el seeding:', e);
     process.exit(1);
 })
     .finally(async () => {
