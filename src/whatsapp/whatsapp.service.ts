@@ -272,8 +272,13 @@ export class WhatsappService {
     const apiUrl = process.env.API_URL || 'http://localhost:3000';
     
     for (let url of imageUrls) {
+      const baseUrl = process.env.API_URL || 'http://localhost:3000';
       if (url.includes('localhost:3000')) {
+<<<<<<< HEAD
         url = url.replace('localhost:3000', apiUrl.replace('http://', '').replace('https://', ''));
+=======
+        url = url.replace('localhost:3000', baseUrl.replace('http://', '').replace('https://', ''));
+>>>>>>> 578d20dbc11e6b91e8669b7c0c8649943e9f8c19
       }
       
       try {
@@ -404,8 +409,13 @@ export class WhatsappService {
     
     fs.writeFileSync(filePath, Buffer.from(buffer));
     
+<<<<<<< HEAD
     const apiUrl = process.env.API_URL || 'http://localhost:3000';
     return `${apiUrl}/uploads/${fileName}`;
+=======
+    const baseUrl = process.env.API_URL || 'http://localhost:3000';
+    return `${baseUrl}/uploads/${fileName}`;
+>>>>>>> 578d20dbc11e6b91e8669b7c0c8649943e9f8c19
   }
 
   private toRad(deg: number): number {

@@ -12,6 +12,7 @@ import { ProductsModule } from './products/products.module';
 import { PromptsModule } from './prompts/prompts.module';
 import { CategoriesModule } from './categories/categories.module';
 import { SubcategoriesModule } from './subcategories/subcategories.module';
+import { OrganizationsModule } from './organizations/organizations.module';
 import { UploadController } from './upload/upload.controller';
 
 @Module({
@@ -25,6 +26,7 @@ import { UploadController } from './upload/upload.controller';
     PromptsModule,
     CategoriesModule,
     SubcategoriesModule,
+    OrganizationsModule,
     ServeStaticModule.forRoot({
       rootPath: join(process.cwd(), 'public'),
     }),
