@@ -83,14 +83,21 @@ let WhatsappService = WhatsappService_1 = class WhatsappService {
                 if (value?.statuses) {
                     this.logger.log('ℹ️ Webhook de estado recibido.');
                 }
+                else {
+                    this.logger.debug('ℹ️ Webhook recibido sin mensajes ni estados:', JSON.stringify(body));
+                }
                 return;
             }
             const phoneId = metadata?.phone_number_id;
-            const org = await this.prisma.organization.findFirst({
+            let org = await this.prisma.organization.findFirst({
                 where: { whatsappPhoneId: phoneId }
             });
             if (!org) {
-                this.logger.error(`❌ Organización no encontrada para el Phone ID: ${phoneId}`);
+                this.logger.warn(`⚠️ Phone ID ${phoneId} no coincide. Usando fallback de la primera organización.`);
+                org = await this.prisma.organization.findFirst();
+            }
+            if (!org) {
+                this.logger.error(`❌ No se encontró ninguna organización para procesar el mensaje.`);
                 return;
             }
             const phoneNumber = message.from;
@@ -270,6 +277,7 @@ let WhatsappService = WhatsappService_1 = class WhatsappService {
             return;
         const decryptedApiKey = (0, crypto_util_1.decrypt)(org.openaiApiKey);
         const { text, imageUrls } = await this.gptService.generateReply(contactId, userMessage, decryptedApiKey, orgId);
+        const apiUrl = process.env.API_URL || 'http://localhost:3000';
         for (let url of imageUrls) {
             const baseUrl = process.env.API_URL || 'http://localhost:3000';
             if (url.includes('localhost:3000')) {

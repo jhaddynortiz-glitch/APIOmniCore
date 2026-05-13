@@ -131,16 +131,17 @@ REGLAS DE ORO:
         // Procesar Tool Calls
         conversationHistory.push(message);
         for (const toolCall of message.tool_calls) {
-          const args = JSON.parse(toolCall.function.arguments);
+          const tc = toolCall as any;
+          const args = JSON.parse(tc.function.arguments);
           let result = '';
 
-          if (toolCall.function.name === 'consultar_productos') {
+          if (tc.function.name === 'consultar_productos') {
             const products = await this.productsService.findAll(orgId, { search: args.query });
             result = products.slice(0, 15).map(p => 
               `- ${p.name} | Precio: ${p.price} ${p.currency} | ID: ${p.id} ${p.imageUrl ? '[FOTO DISPONIBLE]' : '[SIN FOTO]'}`
             ).join('\n') || 'No encontré productos con esos criterios.';
           } 
-          else if (toolCall.function.name === 'mostrar_imagen_producto') {
+          else if (tc.function.name === 'mostrar_imagen_producto') {
             const p = await this.prisma.product.findUnique({ where: { id: args.productId } });
             if (p?.imageUrl) imageUrls.push(p.imageUrl);
             result = p ? `Foto de ${p.name} enviada.` : 'No encontré ese producto.';
