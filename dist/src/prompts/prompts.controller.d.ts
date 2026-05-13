@@ -4,42 +4,42 @@ export declare class PromptsController {
     constructor(promptsService: PromptsService);
     findAll(req: any): Promise<{
         id: string;
-        createdAt: Date;
         name: string;
-        organizationId: string;
         isActive: boolean;
+        organizationId: string;
+        createdAt: Date;
         content: string;
     }[]>;
     findOne(id: string, req: any): Promise<{
         id: string;
-        createdAt: Date;
         name: string;
-        organizationId: string;
         isActive: boolean;
+        organizationId: string;
+        createdAt: Date;
         content: string;
     }>;
     create(req: any, data: any): Promise<{
         id: string;
-        createdAt: Date;
         name: string;
-        organizationId: string;
         isActive: boolean;
+        organizationId: string;
+        createdAt: Date;
         content: string;
     }>;
     update(id: string, req: any, data: any): Promise<{
         id: string;
-        createdAt: Date;
         name: string;
-        organizationId: string;
         isActive: boolean;
+        organizationId: string;
+        createdAt: Date;
         content: string;
     }>;
     remove(id: string, req: any): Promise<{
         id: string;
-        createdAt: Date;
         name: string;
-        organizationId: string;
         isActive: boolean;
+        organizationId: string;
+        createdAt: Date;
         content: string;
     }>;
 }

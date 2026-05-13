@@ -4,37 +4,37 @@ export declare class CategoriesService {
     constructor(prisma: PrismaService);
     findAll(organizationId: string): Promise<{
         id: string;
-        createdAt: Date;
         name: string;
         organizationId: string;
+        createdAt: Date;
     }[]>;
     findOne(id: string, organizationId: string): Promise<{
         id: string;
-        createdAt: Date;
         name: string;
         organizationId: string;
+        createdAt: Date;
     }>;
     create(organizationId: string, data: {
         name: string;
         id?: string;
     }): Promise<{
         id: string;
-        createdAt: Date;
         name: string;
         organizationId: string;
+        createdAt: Date;
     }>;
     update(id: string, organizationId: string, data: {
         name: string;
     }): Promise<{
         id: string;
-        createdAt: Date;
         name: string;
         organizationId: string;
+        createdAt: Date;
     }>;
     remove(id: string, organizationId: string): Promise<{
         id: string;
-        createdAt: Date;
         name: string;
         organizationId: string;
+        createdAt: Date;
     }>;
 }

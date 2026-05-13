@@ -27,18 +27,18 @@ export declare class UsersService {
             fullName: string | null;
         };
     } & {
-        createdAt: Date;
-        userId: string;
         organizationId: string;
+        createdAt: Date;
         role: string;
         status: string;
+        userId: string;
     }>;
     removeOrgMember(userId: string, organizationId: string): Promise<{
-        createdAt: Date;
-        userId: string;
         organizationId: string;
+        createdAt: Date;
         role: string;
         status: string;
+        userId: string;
     }>;
     getOrgMembers(organizationId: string): Promise<({
         User: {
@@ -49,11 +49,11 @@ export declare class UsersService {
             globalRole: string;
         };
     } & {
-        createdAt: Date;
-        userId: string;
         organizationId: string;
+        createdAt: Date;
         role: string;
         status: string;
+        userId: string;
     })[]>;
     getMyInvitations(userId: string): Promise<({
         Organization: {
@@ -62,11 +62,11 @@ export declare class UsersService {
             slug: string;
         };
     } & {
-        createdAt: Date;
-        userId: string;
         organizationId: string;
+        createdAt: Date;
         role: string;
         status: string;
+        userId: string;
     })[]>;
     acceptInvitation(userId: string, organizationId: string): Promise<{
         Organization: {
@@ -74,11 +74,11 @@ export declare class UsersService {
             name: string;
         };
     } & {
-        createdAt: Date;
-        userId: string;
         organizationId: string;
+        createdAt: Date;
         role: string;
         status: string;
+        userId: string;
     }>;
     getMyMemberships(userId: string): Promise<({
         Organization: {
@@ -87,11 +87,11 @@ export declare class UsersService {
             slug: string;
         };
     } & {
-        createdAt: Date;
-        userId: string;
         organizationId: string;
+        createdAt: Date;
         role: string;
         status: string;
+        userId: string;
     })[]>;
     getAllPlatformOrganizations(): Promise<({
         _count: {
@@ -99,8 +99,8 @@ export declare class UsersService {
         };
     } & {
         id: string;
-        createdAt: Date;
         name: string;
+        createdAt: Date;
         slug: string;
         whatsappToken: string | null;
         whatsappPhoneId: string | null;

@@ -4,50 +4,50 @@ export declare class PromptsService {
     constructor(prisma: PrismaService);
     findAll(organizationId: string): Promise<{
         id: string;
-        createdAt: Date;
         name: string;
-        organizationId: string;
         isActive: boolean;
+        organizationId: string;
+        createdAt: Date;
         content: string;
     }[]>;
     findOne(id: string, organizationId: string): Promise<{
         id: string;
-        createdAt: Date;
         name: string;
-        organizationId: string;
         isActive: boolean;
+        organizationId: string;
+        createdAt: Date;
         content: string;
     }>;
     create(organizationId: string, data: any): Promise<{
         id: string;
-        createdAt: Date;
         name: string;
-        organizationId: string;
         isActive: boolean;
+        organizationId: string;
+        createdAt: Date;
         content: string;
     }>;
     update(id: string, organizationId: string, data: any): Promise<{
         id: string;
-        createdAt: Date;
         name: string;
-        organizationId: string;
         isActive: boolean;
+        organizationId: string;
+        createdAt: Date;
         content: string;
     }>;
     remove(id: string, organizationId: string): Promise<{
         id: string;
-        createdAt: Date;
         name: string;
-        organizationId: string;
         isActive: boolean;
+        organizationId: string;
+        createdAt: Date;
         content: string;
     }>;
     getActivePrompt(organizationId: string): Promise<{
         id: string;
-        createdAt: Date;
         name: string;
-        organizationId: string;
         isActive: boolean;
+        organizationId: string;
+        createdAt: Date;
         content: string;
     } | null>;
 }

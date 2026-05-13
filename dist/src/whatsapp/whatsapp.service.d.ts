@@ -32,9 +32,9 @@ export declare class WhatsappService {
         }[];
     } & {
         id: string;
-        createdAt: Date;
         name: string | null;
         organizationId: string;
+        createdAt: Date;
         phoneNumber: string;
         unreadCount: number;
     })[]>;
@@ -77,9 +77,9 @@ export declare class WhatsappService {
         }[];
     } & {
         id: string;
-        createdAt: Date;
         name: string | null;
         organizationId: string;
+        createdAt: Date;
         phoneNumber: string;
         unreadCount: number;
     }>;
