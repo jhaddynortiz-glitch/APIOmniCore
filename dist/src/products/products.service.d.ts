@@ -10,123 +10,123 @@ export declare class ProductsService {
         Subcategory: ({
             Category: {
                 id: string;
+                createdAt: Date;
                 name: string;
                 organizationId: string;
-                createdAt: Date;
             };
         } & {
-            categoryId: string;
             id: string;
+            createdAt: Date;
             name: string;
             organizationId: string;
-            createdAt: Date;
+            categoryId: string;
         }) | null;
     } & {
-        subcategoryId: string | null;
         id: string;
+        createdAt: Date;
         name: string;
+        organizationId: string;
         description: string | null;
+        subcategoryId: string | null;
         price: number;
         imageUrl: string | null;
         currency: string;
         stock: number;
         isActive: boolean;
-        organizationId: string;
-        createdAt: Date;
     })[]>;
     findOne(id: string, organizationId: string): Promise<{
         Subcategory: ({
             Category: {
                 id: string;
+                createdAt: Date;
                 name: string;
                 organizationId: string;
-                createdAt: Date;
             };
         } & {
-            categoryId: string;
             id: string;
+            createdAt: Date;
             name: string;
             organizationId: string;
-            createdAt: Date;
+            categoryId: string;
         }) | null;
     } & {
-        subcategoryId: string | null;
         id: string;
+        createdAt: Date;
         name: string;
+        organizationId: string;
         description: string | null;
+        subcategoryId: string | null;
         price: number;
         imageUrl: string | null;
         currency: string;
         stock: number;
         isActive: boolean;
-        organizationId: string;
-        createdAt: Date;
     }>;
     create(organizationId: string, data: any): Promise<{
-        subcategoryId: string | null;
         id: string;
+        createdAt: Date;
         name: string;
+        organizationId: string;
         description: string | null;
+        subcategoryId: string | null;
         price: number;
         imageUrl: string | null;
         currency: string;
         stock: number;
         isActive: boolean;
-        organizationId: string;
-        createdAt: Date;
     }>;
     update(id: string, organizationId: string, data: any): Promise<{
-        subcategoryId: string | null;
         id: string;
+        createdAt: Date;
         name: string;
+        organizationId: string;
         description: string | null;
+        subcategoryId: string | null;
         price: number;
         imageUrl: string | null;
         currency: string;
         stock: number;
         isActive: boolean;
-        organizationId: string;
-        createdAt: Date;
     }>;
     remove(id: string, organizationId: string): Promise<{
-        subcategoryId: string | null;
         id: string;
+        createdAt: Date;
         name: string;
+        organizationId: string;
         description: string | null;
+        subcategoryId: string | null;
         price: number;
         imageUrl: string | null;
         currency: string;
         stock: number;
         isActive: boolean;
-        organizationId: string;
-        createdAt: Date;
     }>;
     findAllActiveForGpt(organizationId: string): Promise<({
         Subcategory: ({
             Category: {
                 id: string;
+                createdAt: Date;
                 name: string;
                 organizationId: string;
-                createdAt: Date;
             };
         } & {
-            categoryId: string;
             id: string;
+            createdAt: Date;
             name: string;
             organizationId: string;
-            createdAt: Date;
+            categoryId: string;
         }) | null;
     } & {
-        subcategoryId: string | null;
         id: string;
+        createdAt: Date;
         name: string;
+        organizationId: string;
         description: string | null;
+        subcategoryId: string | null;
         price: number;
         imageUrl: string | null;
         currency: string;
         stock: number;
         isActive: boolean;
-        organizationId: string;
-        createdAt: Date;
     })[]>;
 }

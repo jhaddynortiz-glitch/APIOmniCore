@@ -24,11 +24,11 @@ export declare class UsersController {
             globalRole: string;
         };
     } & {
-        organizationId: string;
         createdAt: Date;
+        userId: string;
+        organizationId: string;
         role: string;
         status: string;
-        userId: string;
     })[]>;
     updateOrgMember(req: any, userId: string, data: {
         role?: string;
@@ -40,18 +40,18 @@ export declare class UsersController {
             fullName: string | null;
         };
     } & {
-        organizationId: string;
         createdAt: Date;
+        userId: string;
+        organizationId: string;
         role: string;
         status: string;
-        userId: string;
     }>;
     removeOrgMember(req: any, userId: string): Promise<{
-        organizationId: string;
         createdAt: Date;
+        userId: string;
+        organizationId: string;
         role: string;
         status: string;
-        userId: string;
     }>;
     getMyInvitations(req: any): Promise<({
         Organization: {
@@ -60,11 +60,11 @@ export declare class UsersController {
             slug: string;
         };
     } & {
-        organizationId: string;
         createdAt: Date;
+        userId: string;
+        organizationId: string;
         role: string;
         status: string;
-        userId: string;
     })[]>;
     acceptInvitation(req: any, organizationId: string): Promise<{
         Organization: {
@@ -72,11 +72,11 @@ export declare class UsersController {
             name: string;
         };
     } & {
-        organizationId: string;
         createdAt: Date;
+        userId: string;
+        organizationId: string;
         role: string;
         status: string;
-        userId: string;
     }>;
     getMyMemberships(req: any): Promise<({
         Organization: {
@@ -85,11 +85,11 @@ export declare class UsersController {
             slug: string;
         };
     } & {
-        organizationId: string;
         createdAt: Date;
+        userId: string;
+        organizationId: string;
         role: string;
         status: string;
-        userId: string;
     })[]>;
     getAllOrgs(req: any): Promise<({
         _count: {
@@ -97,8 +97,8 @@ export declare class UsersController {
         };
     } & {
         id: string;
-        name: string;
         createdAt: Date;
+        name: string;
         slug: string;
         whatsappToken: string | null;
         whatsappPhoneId: string | null;

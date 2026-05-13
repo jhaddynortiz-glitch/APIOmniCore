@@ -5,64 +5,64 @@ export declare class SubcategoriesService {
     findAll(organizationId: string): Promise<({
         Category: {
             id: string;
+            createdAt: Date;
             name: string;
             organizationId: string;
-            createdAt: Date;
         };
     } & {
-        categoryId: string;
         id: string;
+        createdAt: Date;
         name: string;
         organizationId: string;
-        createdAt: Date;
+        categoryId: string;
     })[]>;
     findByCategoryId(categoryId: string, organizationId: string): Promise<{
-        categoryId: string;
         id: string;
+        createdAt: Date;
         name: string;
         organizationId: string;
-        createdAt: Date;
+        categoryId: string;
     }[]>;
     findOne(id: string, organizationId: string): Promise<{
         Category: {
             id: string;
+            createdAt: Date;
             name: string;
             organizationId: string;
-            createdAt: Date;
         };
     } & {
-        categoryId: string;
         id: string;
+        createdAt: Date;
         name: string;
         organizationId: string;
-        createdAt: Date;
+        categoryId: string;
     }>;
     create(organizationId: string, data: {
         name: string;
         categoryId: string;
         id?: string;
     }): Promise<{
-        categoryId: string;
         id: string;
+        createdAt: Date;
         name: string;
         organizationId: string;
-        createdAt: Date;
+        categoryId: string;
     }>;
     update(id: string, organizationId: string, data: {
         name: string;
         categoryId: string;
     }): Promise<{
-        categoryId: string;
         id: string;
+        createdAt: Date;
         name: string;
         organizationId: string;
-        createdAt: Date;
+        categoryId: string;
     }>;
     remove(id: string, organizationId: string): Promise<{
-        categoryId: string;
         id: string;
+        createdAt: Date;
         name: string;
         organizationId: string;
-        createdAt: Date;
+        categoryId: string;
     }>;
 }

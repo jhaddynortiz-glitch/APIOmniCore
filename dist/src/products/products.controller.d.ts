@@ -6,95 +6,95 @@ export declare class ProductsController {
         Subcategory: ({
             Category: {
                 id: string;
+                createdAt: Date;
                 name: string;
                 organizationId: string;
-                createdAt: Date;
             };
         } & {
-            categoryId: string;
             id: string;
+            createdAt: Date;
             name: string;
             organizationId: string;
-            createdAt: Date;
+            categoryId: string;
         }) | null;
     } & {
-        subcategoryId: string | null;
         id: string;
+        createdAt: Date;
         name: string;
+        organizationId: string;
         description: string | null;
+        subcategoryId: string | null;
         price: number;
         imageUrl: string | null;
         currency: string;
         stock: number;
         isActive: boolean;
-        organizationId: string;
-        createdAt: Date;
     })[]>;
     findOne(id: string, req: any): Promise<{
         Subcategory: ({
             Category: {
                 id: string;
+                createdAt: Date;
                 name: string;
                 organizationId: string;
-                createdAt: Date;
             };
         } & {
-            categoryId: string;
             id: string;
+            createdAt: Date;
             name: string;
             organizationId: string;
-            createdAt: Date;
+            categoryId: string;
         }) | null;
     } & {
-        subcategoryId: string | null;
         id: string;
+        createdAt: Date;
         name: string;
+        organizationId: string;
         description: string | null;
+        subcategoryId: string | null;
         price: number;
         imageUrl: string | null;
         currency: string;
         stock: number;
         isActive: boolean;
-        organizationId: string;
-        createdAt: Date;
     }>;
     create(req: any, data: any): Promise<{
-        subcategoryId: string | null;
         id: string;
+        createdAt: Date;
         name: string;
+        organizationId: string;
         description: string | null;
+        subcategoryId: string | null;
         price: number;
         imageUrl: string | null;
         currency: string;
         stock: number;
         isActive: boolean;
-        organizationId: string;
-        createdAt: Date;
     }>;
     update(id: string, req: any, data: any): Promise<{
-        subcategoryId: string | null;
         id: string;
+        createdAt: Date;
         name: string;
+        organizationId: string;
         description: string | null;
+        subcategoryId: string | null;
         price: number;
         imageUrl: string | null;
         currency: string;
         stock: number;
         isActive: boolean;
-        organizationId: string;
-        createdAt: Date;
     }>;
     remove(id: string, req: any): Promise<{
-        subcategoryId: string | null;
         id: string;
+        createdAt: Date;
         name: string;
+        organizationId: string;
         description: string | null;
+        subcategoryId: string | null;
         price: number;
         imageUrl: string | null;
         currency: string;
         stock: number;
         isActive: boolean;
-        organizationId: string;
-        createdAt: Date;
     }>;
 }
