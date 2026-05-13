@@ -262,8 +262,9 @@ export class WhatsappService {
 
     // 1. Enviar las imágenes detectadas por la IA
     for (let url of imageUrls) {
+      const baseUrl = process.env.API_URL || 'http://localhost:3000';
       if (url.includes('localhost:3000')) {
-        url = url.replace('localhost:3000', '192.168.100.4:3000');
+        url = url.replace('localhost:3000', baseUrl.replace('http://', '').replace('https://', ''));
       }
       
       try {
@@ -394,7 +395,8 @@ export class WhatsappService {
     
     fs.writeFileSync(filePath, Buffer.from(buffer));
     
-    return `http://localhost:3000/uploads/${fileName}`;
+    const baseUrl = process.env.API_URL || 'http://localhost:3000';
+    return `${baseUrl}/uploads/${fileName}`;
   }
 
   private toRad(deg: number): number {

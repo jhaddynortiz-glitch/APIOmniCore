@@ -29,7 +29,8 @@ export class UploadController {
     }
     
     // Devolvemos la URL pública
-    const fileUrl = `http://localhost:3000/uploads/${file.filename}`;
+    const baseUrl = process.env.API_URL || 'http://localhost:3000';
+    const fileUrl = `${baseUrl}/uploads/${file.filename}`;
     
     return {
       url: fileUrl,

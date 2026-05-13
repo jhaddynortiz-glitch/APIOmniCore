@@ -22,7 +22,8 @@ let UploadController = class UploadController {
         if (!file) {
             throw new common_1.HttpException('Archivo no subido', common_1.HttpStatus.BAD_REQUEST);
         }
-        const fileUrl = `http://localhost:3000/uploads/${file.filename}`;
+        const baseUrl = process.env.API_URL || 'http://localhost:3000';
+        const fileUrl = `${baseUrl}/uploads/${file.filename}`;
         return {
             url: fileUrl,
             filename: file.filename,

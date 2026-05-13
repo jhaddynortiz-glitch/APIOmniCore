@@ -271,8 +271,9 @@ let WhatsappService = WhatsappService_1 = class WhatsappService {
         const decryptedApiKey = (0, crypto_util_1.decrypt)(org.openaiApiKey);
         const { text, imageUrls } = await this.gptService.generateReply(contactId, userMessage, decryptedApiKey, orgId);
         for (let url of imageUrls) {
+            const baseUrl = process.env.API_URL || 'http://localhost:3000';
             if (url.includes('localhost:3000')) {
-                url = url.replace('localhost:3000', '192.168.100.4:3000');
+                url = url.replace('localhost:3000', baseUrl.replace('http://', '').replace('https://', ''));
             }
             try {
                 await this.sendMessage(contactId, '', 'image', url);
@@ -376,7 +377,8 @@ let WhatsappService = WhatsappService_1 = class WhatsappService {
         const fileName = `${Date.now()}-${mediaId}.${mediaData.mime_type.split('/')[1]}`;
         const filePath = path.join(process.cwd(), 'public', 'uploads', fileName);
         fs.writeFileSync(filePath, Buffer.from(buffer));
-        return `http://localhost:3000/uploads/${fileName}`;
+        const baseUrl = process.env.API_URL || 'http://localhost:3000';
+        return `${baseUrl}/uploads/${fileName}`;
     }
     toRad(deg) {
         return deg * (Math.PI / 180);
