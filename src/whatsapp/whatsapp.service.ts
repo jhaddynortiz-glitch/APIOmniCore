@@ -40,18 +40,26 @@ export class WhatsappService {
       if (!message) {
         if (value?.statuses) {
           this.logger.log('ℹ️ Webhook de estado recibido.');
+        } else {
+          this.logger.debug('ℹ️ Webhook recibido sin mensajes ni estados:', JSON.stringify(body));
         }
         return;
       }
 
       // Identificamos la organización por el ID de teléfono de WhatsApp que recibe el mensaje
       const phoneId = metadata?.phone_number_id;
-      const org = await this.prisma.organization.findFirst({
+      let org = await this.prisma.organization.findFirst({
         where: { whatsappPhoneId: phoneId }
       });
 
+      // Fallback: Si no coincide el ID, intentamos usar la primera organización (útil en entornos de prueba o desajustes de ID)
       if (!org) {
-        this.logger.error(`❌ Organización no encontrada para el Phone ID: ${phoneId}`);
+        this.logger.warn(`⚠️ Phone ID ${phoneId} no coincide. Usando fallback de la primera organización.`);
+        org = await this.prisma.organization.findFirst();
+      }
+
+      if (!org) {
+        this.logger.error(`❌ No se encontró ninguna organización para procesar el mensaje.`);
         return;
       }
 
@@ -261,9 +269,11 @@ export class WhatsappService {
     const { text, imageUrls } = await this.gptService.generateReply(contactId, userMessage, decryptedApiKey, orgId);
 
     // 1. Enviar las imágenes detectadas por la IA
+    const apiUrl = process.env.API_URL || 'http://localhost:3000';
+    
     for (let url of imageUrls) {
       if (url.includes('localhost:3000')) {
-        url = url.replace('localhost:3000', '192.168.100.4:3000');
+        url = url.replace('localhost:3000', apiUrl.replace('http://', '').replace('https://', ''));
       }
       
       try {
@@ -394,7 +404,8 @@ export class WhatsappService {
     
     fs.writeFileSync(filePath, Buffer.from(buffer));
     
-    return `http://localhost:3000/uploads/${fileName}`;
+    const apiUrl = process.env.API_URL || 'http://localhost:3000';
+    return `${apiUrl}/uploads/${fileName}`;
   }
 
   private toRad(deg: number): number {

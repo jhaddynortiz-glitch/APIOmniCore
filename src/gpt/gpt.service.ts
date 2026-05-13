@@ -4,12 +4,6 @@ import { PrismaService } from '../prisma/prisma.service';
 import { ProductsService } from '../products/products.service';
 import { PromptsService } from '../prompts/prompts.service';
 import { CategoriesService } from '../categories/categories.service';
-import { decrypt } from '../common/utils/crypto.util';
-import * as fs from 'fs';
-import * as path from 'path';
-
-import * as dotenv from 'dotenv';
-dotenv.config();
 
 @Injectable()
 export class GptService {
@@ -18,24 +12,16 @@ export class GptService {
   private readonly DEFAULT_SYSTEM_PROMPT = `
 Eres un asistente de ventas experto y amable. Tu objetivo es guiar al cliente por nuestro catálogo de forma progresiva y natural.
 
- FLUJO DE CONVERSACIÓN:
+FLUJO DE CONVERSACIÓN:
 1. INICIO: Saluda y pregunta qué tipo de productos buscan, citando las CATEGORÍAS disponibles.
-2. INTERÉS EN CATEGORÍA: Si mencionan una categoría, lista las SUBCATEGORÍAS que pertenecen a ella para ayudarles a filtrar.
-3. INTERÉS EN SUBCATEGORÍA: Si mencionan una subcategoría, muestra el listado de PRODUCTOS disponibles con sus precios.
-4. SALTO DIRECTO: Si el cliente pregunta directamente por un producto o subcategoría, responde directamente con la información, sin forzar los pasos previos.
+2. INTERÉS: Si mencionan una categoría o producto, utiliza la herramienta "consultar_productos" para ver las opciones disponibles y sus precios actuales.
+3. FOTOS: Si el cliente pide ver la foto de un producto, usa la herramienta "mostrar_imagen_producto" con el ID obtenido en la consulta.
 
 REGLAS DE ORO:
-- NO menciones las palabras técnicas "Categoría" o "Subcategoría" al cliente. Solo cita sus nombres (ej: "Tenemos productos capilares y electrodomésticos" en lugar de "Nuestras categorías son...").
+- NO menciones las palabras técnicas "Categoría" o "Subcategoría". Solo cita sus nombres.
 - Mantén las respuestas breves, usa emojis y tono de WhatsApp.
-- SOLO OFRECE LO QUE APARECE EN EL LISTADO DE ABAJO.
-- ENVÍO DE FOTOS (CRÍTICO): Si mencionas un producto que tiene [IMAGEN DISPONIBLE], DEBES copiar exactamente su TAG_DE_IMAGEN al final de tu mensaje. 
-- EJEMPLO: Si el catálogo dice "TAG_DE_IMAGEN: [ID: 123-abc]", tú debes escribir "[ID: 123-abc]" al final. 
-- NUNCA escribas "[ID: uuid-del-producto]", usa siempre el código alfanumérico real del catálogo.
-- Si el cliente te pide una foto y no hay imagen disponible, explica amablemente que no tienes la foto en este momento.
-
-
-INSTRUCIONES / CATÁLOGO (Uso interno para ti):
-{{productos}}
+- SOLO OFRECE LO QUE APARECE EN LOS RESULTADOS DE TUS HERRAMIENTAS.
+- Si no encuentras un producto en la consulta, indica amablemente que no está disponible por ahora.
 `.trim();
 
   constructor(
@@ -54,170 +40,129 @@ INSTRUCIONES / CATÁLOGO (Uso interno para ti):
 
       const openai = new OpenAI({ apiKey: apiKey.trim() });
 
-      // 1. Obtener el prompt activo
+      // 1. Obtener prompt y categorías básicas (Ahorro de tokens masivo al no enviar productos aquí)
       const customPrompt = await this.promptsService.getActivePrompt(orgId);
       let systemInstruction = customPrompt?.content || this.DEFAULT_SYSTEM_PROMPT;
 
-      // 2. Construir catálogo jerárquico y listas simples
       const categories = await this.categoriesService.findAll(orgId);
-      const allActiveProducts = await this.productsService.findAllActiveForGpt(orgId);
-      const subcategories = await this.prisma.subcategory.findMany({ where: { organizationId: orgId } });
-
-      let catalogTree = '';
       const categoryNames = categories.map(c => c.name).join(', ');
-      const subcategoryNames = subcategories.map(s => s.name).join(', ');
 
-      if (categories.length === 0) {
-        catalogTree = 'No hay categorías configuradas aún.';
-      } else {
-        for (const cat of categories) {
-          catalogTree += `\n* CATEGORÍA: ${cat.name}\n`;
-          const catProducts = allActiveProducts.filter(p => p.Subcategory?.categoryId === cat.id);
-          const subMap = new Map<string, any[]>();
-          for (const p of catProducts) {
-            const subName = p.Subcategory?.name || 'Otros';
-            if (!subMap.has(subName)) subMap.set(subName, []);
-            subMap.get(subName)?.push(p);
-          }
-
-          if (subMap.size === 0) {
-            catalogTree += `  (Próximamente productos en esta categoría)\n`;
-          } else {
-            for (const [subName, products] of subMap.entries()) {
-              catalogTree += `  - SUBCATEGORÍA: ${subName}\n`;
-              for (const p of products) {
-                const imgStatus = !!p.imageUrl ? '[FOTO_DISPONIBLE]' : '[SIN_FOTO]';
-                catalogTree += `    ● PRODUCTO: ${p.name} | PRECIO: ${p.price} ${p.currency} | (ID: ${p.id}) | ${imgStatus}\n`;
-              }
-            }
-          }
-        }
-      }
-
-      // 3. Inyectar en el prompt (Soporte para múltiples keys y en Inglés/Español)
       const replacements: Record<string, string> = {
-        '{{productos}}': catalogTree.trim(),
-        '{{products}}': catalogTree.trim(),
-        '{{categorias}}': categoryNames || 'Ninguna',
-        '{{categories}}': categoryNames || 'None',
-        '{{subcategorias}}': subcategoryNames || 'Ninguna',
-        '{{subcategories}}': subcategoryNames || 'None'
+        '{{categorias}}': categoryNames || 'nuestro catálogo',
+        '{{categories}}': categoryNames || 'our catalog',
+        '{{productos}}': 'Consulta el catálogo usando la herramienta "consultar_productos" cuando sea necesario.',
+        '{{products}}': 'Query the catalog using the "consultar_productos" tool when necessary.'
       };
 
       for (const [key, value] of Object.entries(replacements)) {
         systemInstruction = (systemInstruction as any).replaceAll(key, value);
       }
 
-      // 4. Obtener historial
+      // 2. Historial Optimizado (take: 10 en lugar de 15 para ahorrar tokens)
       const recentMessages = await this.prisma.message.findMany({
         where: { contactId },
         orderBy: { createdAt: 'asc' },
-        take: 15,
+        take: 10,
       });
 
       const conversationHistory: OpenAI.Chat.ChatCompletionMessageParam[] = [
         { role: 'system', content: systemInstruction },
+        ...recentMessages.map(msg => ({
+          role: (msg.isFromMe ? 'assistant' : 'user') as 'assistant' | 'user',
+          content: msg.body || '',
+        })),
       ];
 
-      for (const msg of recentMessages) {
-        conversationHistory.push({
-          role: msg.isFromMe ? 'assistant' : 'user',
-          content: msg.body || '',
-        });
-      }
-
-      const lastInHistory = recentMessages[recentMessages.length - 1];
-      if (!lastInHistory || lastInHistory.body !== latestMessageBody) {
+      if (!recentMessages.length || recentMessages[recentMessages.length - 1].body !== latestMessageBody) {
         conversationHistory.push({ role: 'user', content: latestMessageBody });
       }
 
-      // 5. Construir herramientas dinámicas con IDs REALES de la DB
-      const productsWithImages = allActiveProducts.filter(p => !!p.imageUrl);
-      
-      // Mapeo de IDs reales para la descripción de la herramienta
-      const idDescriptions = productsWithImages
-        .map(p => `"${p.id}" = ${p.name}`)
-        .join(', ');
-      
-      const validIds = productsWithImages.map(p => p.id);
-      
-      this.logger.log(`📸 Productos con foto disponibles: ${validIds.length}`);
-      for (const p of productsWithImages) {
-        this.logger.log(`  ✅ ${p.name} → ${p.id}`);
-      }
-
-      // Solo incluir la herramienta si hay productos con fotos
-      const tools: any[] = validIds.length > 0 ? [
+      // 3. Definición de Herramientas (Sin listas gigantes de IDs)
+      const tools: OpenAI.Chat.ChatCompletionTool[] = [
+        {
+          type: 'function',
+          function: {
+            name: 'consultar_productos',
+            description: 'Busca productos, precios y disponibilidad en el catálogo.',
+            parameters: {
+              type: 'object',
+              properties: {
+                query: { type: 'string', description: 'Nombre del producto, subcategoría o categoría a buscar' }
+              }
+            }
+          }
+        },
         {
           type: 'function',
           function: {
             name: 'mostrar_imagen_producto',
-            description: `Envía la foto de un producto al cliente. Los productos disponibles son: ${idDescriptions}`,
+            description: 'Envía la foto de un producto al cliente.',
             parameters: {
               type: 'object',
               properties: {
-                productId: { 
-                  type: 'string', 
-                  enum: validIds,
-                  description: `ID del producto. Valores válidos: ${idDescriptions}`
-                }
+                productId: { type: 'string', description: 'ID único del producto' }
               },
               required: ['productId']
             }
           }
         }
-      ] : [];
+      ];
 
-      // Instrucción final
-      if (validIds.length > 0) {
-        conversationHistory.push({ 
-          role: 'system', 
-          content: `Cuando el cliente pida ver la foto de un producto, usa la herramienta "mostrar_imagen_producto". Responde siempre con texto amigable además de usar la herramienta.` 
+      // 4. Ciclo de resolución de herramientas
+      let imageUrls: string[] = [];
+      let finalReply = '';
+
+      for (let i = 0; i < 3; i++) { // Máximo 3 interacciones para evitar bucles infinitos
+        const completion = await openai.chat.completions.create({
+          model: 'gpt-4o-mini',
+          messages: conversationHistory,
+          max_tokens: 500,
+          temperature: 0.7,
+          tools
         });
-      }
 
-      // 6. Llamar a OpenAI con Herramientas
-      const completion = await openai.chat.completions.create({
-        model: 'gpt-4o-mini',
-        messages: conversationHistory,
-        max_tokens: 500,
-        temperature: 0.7,
-        ...(tools.length > 0 ? { tools } : {})
-      });
+        const message = completion.choices[0]?.message;
+        
+        if (!message?.tool_calls) {
+          finalReply = message?.content || '';
+          break;
+        }
 
-      const message = completion.choices[0]?.message;
-      const imageUrls: string[] = [];
-      // Procesar llamadas a herramientas
-      if (message?.tool_calls) {
+        // Procesar Tool Calls
+        conversationHistory.push(message);
         for (const toolCall of message.tool_calls) {
-          const tc = toolCall as any;
-          if (tc.function?.name === 'mostrar_imagen_producto') {
-            const { productId } = JSON.parse(tc.function.arguments);
-            const product = await this.prisma.product.findUnique({ where: { id: productId } });
-            
-            if (product?.imageUrl) {
-              imageUrls.push(product.imageUrl);
-            }
+          const args = JSON.parse(toolCall.function.arguments);
+          let result = '';
+
+          if (toolCall.function.name === 'consultar_productos') {
+            const products = await this.productsService.findAll(orgId, { search: args.query });
+            result = products.slice(0, 15).map(p => 
+              `- ${p.name} | Precio: ${p.price} ${p.currency} | ID: ${p.id} ${p.imageUrl ? '[FOTO DISPONIBLE]' : '[SIN FOTO]'}`
+            ).join('\n') || 'No encontré productos con esos criterios.';
+          } 
+          else if (toolCall.function.name === 'mostrar_imagen_producto') {
+            const p = await this.prisma.product.findUnique({ where: { id: args.productId } });
+            if (p?.imageUrl) imageUrls.push(p.imageUrl);
+            result = p ? `Foto de ${p.name} enviada.` : 'No encontré ese producto.';
           }
+
+          conversationHistory.push({
+            role: 'tool',
+            tool_call_id: toolCall.id,
+            content: result
+          });
         }
       }
 
-      // 7. Determinar el texto de respuesta
-      let replyText = completion.choices[0]?.message?.content?.trim();
-      
-      if (!replyText && imageUrls.length > 0) {
-        replyText = '¡Claro! Aquí tienes la foto:';
-      }
-
       return {
-        text: replyText || 'Un agente te ayudará pronto.',
-        imageUrls
+        text: finalReply || '¿En qué más puedo ayudarte?',
+        imageUrls: [...new Set(imageUrls)]
       };
 
     } catch (error: any) {
       this.logger.error(`❌ Error en GptService: ${error.message}`, error.stack);
       return { 
-        text: `Error técnico: ${error.message}. Por favor contacta a soporte.`, 
+        text: `Disculpa, tuve un problema técnico. Un agente te ayudará pronto.`, 
         imageUrls: [] 
       };
     }
