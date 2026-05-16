@@ -42,5 +42,6 @@ jobs:
             # Comando para correr el contenedor con tus variables (ajusta si faltan)
             docker run -d --name api-omnicore \
               -p 3000:3000 \
+              --env-file /home/ubuntu/.env \
               --restart always \
               jhaddyn/api-omnicore:latest
