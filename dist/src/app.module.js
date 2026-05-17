@@ -23,6 +23,7 @@ const categories_module_1 = require("./categories/categories.module");
 const subcategories_module_1 = require("./subcategories/subcategories.module");
 const organizations_module_1 = require("./organizations/organizations.module");
 const upload_controller_1 = require("./upload/upload.controller");
+const upload_service_1 = require("./upload/upload.service");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -44,7 +45,7 @@ exports.AppModule = AppModule = __decorate([
             }),
         ],
         controllers: [app_controller_1.AppController, upload_controller_1.UploadController],
-        providers: [app_service_1.AppService],
+        providers: [app_service_1.AppService, upload_service_1.UploadService],
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map

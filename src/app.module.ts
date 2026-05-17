@@ -14,6 +14,7 @@ import { CategoriesModule } from './categories/categories.module';
 import { SubcategoriesModule } from './subcategories/subcategories.module';
 import { OrganizationsModule } from './organizations/organizations.module';
 import { UploadController } from './upload/upload.controller';
+import { UploadService } from './upload/upload.service';
 
 @Module({
   imports: [
@@ -32,6 +33,6 @@ import { UploadController } from './upload/upload.controller';
     }),
   ],
   controllers: [AppController, UploadController],
-  providers: [AppService],
+  providers: [AppService, UploadService],
 })
 export class AppModule {}

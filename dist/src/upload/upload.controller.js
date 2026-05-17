@@ -15,46 +15,50 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UploadController = void 0;
 const common_1 = require("@nestjs/common");
 const platform_express_1 = require("@nestjs/platform-express");
-const multer_1 = require("multer");
-const path_1 = require("path");
+const upload_service_1 = require("./upload.service");
 let UploadController = class UploadController {
-    uploadFile(file) {
+    uploadService;
+    constructor(uploadService) {
+        this.uploadService = uploadService;
+    }
+    async uploadFile(file) {
         if (!file) {
             throw new common_1.HttpException('Archivo no subido', common_1.HttpStatus.BAD_REQUEST);
         }
-        const baseUrl = process.env.API_URL || 'http://localhost:3000';
-        const fileUrl = `${baseUrl}/uploads/${file.filename}`;
-        return {
-            url: fileUrl,
-            filename: file.filename,
-            mimetype: file.mimetype,
-        };
+        try {
+            const result = await this.uploadService.uploadImage(file);
+            return {
+                url: result.url,
+                filename: result.key,
+                mimetype: file.mimetype,
+            };
+        }
+        catch (error) {
+            throw new common_1.HttpException('Error subiendo imagen a S3', common_1.HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 };
 exports.UploadController = UploadController;
 __decorate([
     (0, common_1.Post)(),
     (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file', {
-        storage: (0, multer_1.diskStorage)({
-            destination: './public/uploads',
-            filename: (req, file, cb) => {
-                const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-                cb(null, `${uniqueSuffix}${(0, path_1.extname)(file.originalname)}`);
-            },
-        }),
         fileFilter: (req, file, cb) => {
-            if (!file.mimetype.match(/\/(jpg|jpeg|png|gif)$/)) {
-                return cb(new common_1.HttpException('Solo se permiten imágenes (jpg, png, gif)', common_1.HttpStatus.BAD_REQUEST), false);
+            if (!file.mimetype.match(/\/(jpg|jpeg|png|gif|webp)$/)) {
+                return cb(new common_1.HttpException('Solo se permiten imágenes', common_1.HttpStatus.BAD_REQUEST), false);
             }
             cb(null, true);
         },
+        limits: {
+            fileSize: 5 * 1024 * 1024,
+        }
     })),
     __param(0, (0, common_1.UploadedFile)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], UploadController.prototype, "uploadFile", null);
 exports.UploadController = UploadController = __decorate([
-    (0, common_1.Controller)('upload')
+    (0, common_1.Controller)('upload'),
+    __metadata("design:paramtypes", [upload_service_1.UploadService])
 ], UploadController);
 //# sourceMappingURL=upload.controller.js.map

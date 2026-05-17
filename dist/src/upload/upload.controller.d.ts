@@ -1,7 +1,10 @@
+import { UploadService } from './upload.service';
 export declare class UploadController {
-    uploadFile(file: Express.Multer.File): {
+    private readonly uploadService;
+    constructor(uploadService: UploadService);
+    uploadFile(file: Express.Multer.File): Promise<{
         url: string;
         filename: string;
         mimetype: string;
-    };
+    }>;
 }

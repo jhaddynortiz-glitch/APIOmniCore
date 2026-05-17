@@ -1,41 +1,40 @@
 import { Controller, Post, UseInterceptors, UploadedFile, HttpException, HttpStatus } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
+import { UploadService } from './upload.service';
 
 @Controller('upload')
 export class UploadController {
+  constructor(private readonly uploadService: UploadService) {}
+
   @Post()
   @UseInterceptors(
     FileInterceptor('file', {
-      storage: diskStorage({
-        destination: './public/uploads',
-        filename: (req, file, cb) => {
-          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-          cb(null, `${uniqueSuffix}${extname(file.originalname)}`);
-        },
-      }),
       fileFilter: (req, file, cb) => {
-        if (!file.mimetype.match(/\/(jpg|jpeg|png|gif)$/)) {
-          return cb(new HttpException('Solo se permiten imágenes (jpg, png, gif)', HttpStatus.BAD_REQUEST), false);
+        if (!file.mimetype.match(/\/(jpg|jpeg|png|gif|webp)$/)) {
+          return cb(new HttpException('Solo se permiten imágenes', HttpStatus.BAD_REQUEST), false);
         }
         cb(null, true);
       },
+      limits: {
+        fileSize: 5 * 1024 * 1024, // 5MB limit
+      }
     }),
   )
-  uploadFile(@UploadedFile() file: Express.Multer.File) {
+  async uploadFile(@UploadedFile() file: Express.Multer.File) {
     if (!file) {
       throw new HttpException('Archivo no subido', HttpStatus.BAD_REQUEST);
     }
     
-    // Devolvemos la URL pública
-    const baseUrl = process.env.API_URL || 'http://localhost:3000';
-    const fileUrl = `${baseUrl}/uploads/${file.filename}`;
-    
-    return {
-      url: fileUrl,
-      filename: file.filename,
-      mimetype: file.mimetype,
-    };
+    try {
+      const result = await this.uploadService.uploadImage(file);
+      
+      return {
+        url: result.url,
+        filename: result.key,
+        mimetype: file.mimetype,
+      };
+    } catch (error) {
+      throw new HttpException('Error subiendo imagen a S3', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 }
