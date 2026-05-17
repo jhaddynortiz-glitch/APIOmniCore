@@ -31,6 +31,9 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/prisma ./prisma
 
+# Crear la carpeta de uploads para evitar errores de Multer o ServeStaticModule
+RUN mkdir -p public/uploads
+
 # Expose the port the app runs on
 EXPOSE 3000
 

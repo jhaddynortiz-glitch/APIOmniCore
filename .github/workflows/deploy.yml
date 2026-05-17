@@ -43,5 +43,6 @@ jobs:
             docker run -d --name api-omnicore \
               -p 3000:3000 \
               --env-file /home/ubuntu/.env \
+              -v /home/ubuntu/uploads:/app/public/uploads \
               --restart always \
               jhaddyn/api-omnicore:latest
