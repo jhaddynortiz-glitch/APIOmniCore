@@ -46,6 +46,18 @@ export class WhatsappService {
         return;
       }
 
+      // 0. Evitar procesamiento duplicado (Meta reintenta webhooks)
+      if (message.id) {
+        const existingMessage = await this.prisma.message.findUnique({
+          where: { id: message.id }
+        });
+
+        if (existingMessage) {
+          this.logger.warn(`⚠️ Webhook duplicado ignorado. Mensaje ya procesado: ${message.id}`);
+          return;
+        }
+      }
+
       // Identificamos la organización por el ID de teléfono de WhatsApp que recibe el mensaje
       const phoneId = metadata?.phone_number_id;
       let org = await this.prisma.organization.findFirst({
@@ -102,6 +114,7 @@ export class WhatsappService {
       // 4. Guardar mensaje
       const createdMessage = await this.prisma.message.create({
         data: {
+          id: message.id, // Guardamos el ID real de Meta para evitar duplicados
           body: savedBody,
           isFromMe: false,
           type: messageTypeForDb,
@@ -129,6 +142,7 @@ export class WhatsappService {
 
           const createdMessage = await this.prisma.message.create({
             data: {
+              id: message.id, // Guardamos el ID real de Meta
               body: savedBody,
               mediaUrl: mediaUrl,
               mimeType: image.mime_type,

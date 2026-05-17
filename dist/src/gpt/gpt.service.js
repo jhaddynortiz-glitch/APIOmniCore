@@ -66,11 +66,12 @@ REGLAS DE ORO:
             for (const [key, value] of Object.entries(replacements)) {
                 systemInstruction = systemInstruction.replaceAll(key, value);
             }
-            const recentMessages = await this.prisma.message.findMany({
+            let recentMessages = await this.prisma.message.findMany({
                 where: { contactId },
-                orderBy: { createdAt: 'asc' },
+                orderBy: { createdAt: 'desc' },
                 take: 10,
             });
+            recentMessages = recentMessages.reverse();
             const conversationHistory = [
                 { role: 'system', content: systemInstruction },
                 ...recentMessages.map(msg => ({

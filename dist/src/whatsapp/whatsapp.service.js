@@ -88,6 +88,15 @@ let WhatsappService = WhatsappService_1 = class WhatsappService {
                 }
                 return;
             }
+            if (message.id) {
+                const existingMessage = await this.prisma.message.findUnique({
+                    where: { id: message.id }
+                });
+                if (existingMessage) {
+                    this.logger.warn(`⚠️ Webhook duplicado ignorado. Mensaje ya procesado: ${message.id}`);
+                    return;
+                }
+            }
             const phoneId = metadata?.phone_number_id;
             let org = await this.prisma.organization.findFirst({
                 where: { whatsappPhoneId: phoneId }
@@ -132,6 +141,7 @@ let WhatsappService = WhatsappService_1 = class WhatsappService {
             }
             const createdMessage = await this.prisma.message.create({
                 data: {
+                    id: message.id,
                     body: savedBody,
                     isFromMe: false,
                     type: messageTypeForDb,
@@ -154,6 +164,7 @@ let WhatsappService = WhatsappService_1 = class WhatsappService {
                     messageTypeForDb = 'image';
                     const createdMessage = await this.prisma.message.create({
                         data: {
+                            id: message.id,
                             body: savedBody,
                             mediaUrl: mediaUrl,
                             mimeType: image.mime_type,

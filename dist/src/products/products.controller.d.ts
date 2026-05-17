@@ -6,22 +6,22 @@ export declare class ProductsController {
         Subcategory: ({
             Category: {
                 id: string;
-                createdAt: Date;
                 name: string;
                 organizationId: string;
+                createdAt: Date;
             };
         } & {
             id: string;
-            createdAt: Date;
             name: string;
             organizationId: string;
+            createdAt: Date;
             categoryId: string;
         }) | null;
     } & {
         id: string;
-        createdAt: Date;
         name: string;
         organizationId: string;
+        createdAt: Date;
         description: string | null;
         subcategoryId: string | null;
         price: number;
@@ -34,22 +34,22 @@ export declare class ProductsController {
         Subcategory: ({
             Category: {
                 id: string;
-                createdAt: Date;
                 name: string;
                 organizationId: string;
+                createdAt: Date;
             };
         } & {
             id: string;
-            createdAt: Date;
             name: string;
             organizationId: string;
+            createdAt: Date;
             categoryId: string;
         }) | null;
     } & {
         id: string;
-        createdAt: Date;
         name: string;
         organizationId: string;
+        createdAt: Date;
         description: string | null;
         subcategoryId: string | null;
         price: number;
@@ -60,9 +60,9 @@ export declare class ProductsController {
     }>;
     create(req: any, data: any): Promise<{
         id: string;
-        createdAt: Date;
         name: string;
         organizationId: string;
+        createdAt: Date;
         description: string | null;
         subcategoryId: string | null;
         price: number;
@@ -73,9 +73,9 @@ export declare class ProductsController {
     }>;
     update(id: string, req: any, data: any): Promise<{
         id: string;
-        createdAt: Date;
         name: string;
         organizationId: string;
+        createdAt: Date;
         description: string | null;
         subcategoryId: string | null;
         price: number;
@@ -86,9 +86,9 @@ export declare class ProductsController {
     }>;
     remove(id: string, req: any): Promise<{
         id: string;
-        createdAt: Date;
         name: string;
         organizationId: string;
+        createdAt: Date;
         description: string | null;
         subcategoryId: string | null;
         price: number;

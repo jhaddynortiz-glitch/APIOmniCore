@@ -13,18 +13,18 @@ export declare class WhatsappController {
             id: string;
             createdAt: Date;
             body: string | null;
-            mediaUrl: string | null;
-            mimeType: string | null;
             isFromMe: boolean;
             type: string;
             contactId: string;
+            mediaUrl: string | null;
+            mimeType: string | null;
         }[];
     } & {
         id: string;
-        createdAt: Date;
+        phoneNumber: string;
         name: string | null;
         organizationId: string;
-        phoneNumber: string;
+        createdAt: Date;
         unreadCount: number;
     })[]>;
     createContact(req: any, name: string, phoneNumber: string): Promise<{
@@ -32,39 +32,39 @@ export declare class WhatsappController {
             id: string;
             createdAt: Date;
             body: string | null;
-            mediaUrl: string | null;
-            mimeType: string | null;
             isFromMe: boolean;
             type: string;
             contactId: string;
+            mediaUrl: string | null;
+            mimeType: string | null;
         }[];
     } & {
         id: string;
-        createdAt: Date;
+        phoneNumber: string;
         name: string | null;
         organizationId: string;
-        phoneNumber: string;
+        createdAt: Date;
         unreadCount: number;
     }>;
     getMessages(contactId: string, limit?: number, cursor?: string): Promise<{
         id: string;
         createdAt: Date;
         body: string | null;
-        mediaUrl: string | null;
-        mimeType: string | null;
         isFromMe: boolean;
         type: string;
         contactId: string;
+        mediaUrl: string | null;
+        mimeType: string | null;
     }[]>;
     sendMessage(contactId: string, text: string, type?: string, mediaUrl?: string): Promise<{
         id: string;
         createdAt: Date;
         body: string | null;
-        mediaUrl: string | null;
-        mimeType: string | null;
         isFromMe: boolean;
         type: string;
         contactId: string;
+        mediaUrl: string | null;
+        mimeType: string | null;
     }>;
     markAsRead(contactId: string): Promise<{
         success: boolean;

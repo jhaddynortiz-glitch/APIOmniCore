@@ -59,11 +59,12 @@ REGLAS DE ORO:
       }
 
       // 2. Historial Optimizado (take: 10 en lugar de 15 para ahorrar tokens)
-      const recentMessages = await this.prisma.message.findMany({
+      let recentMessages = await this.prisma.message.findMany({
         where: { contactId },
-        orderBy: { createdAt: 'asc' },
+        orderBy: { createdAt: 'desc' },
         take: 10,
       });
+      recentMessages = recentMessages.reverse();
 
       const conversationHistory: OpenAI.Chat.ChatCompletionMessageParam[] = [
         { role: 'system', content: systemInstruction },

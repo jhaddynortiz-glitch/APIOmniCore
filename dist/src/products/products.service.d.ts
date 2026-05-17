@@ -10,22 +10,22 @@ export declare class ProductsService {
         Subcategory: ({
             Category: {
                 id: string;
-                createdAt: Date;
                 name: string;
                 organizationId: string;
+                createdAt: Date;
             };
         } & {
             id: string;
-            createdAt: Date;
             name: string;
             organizationId: string;
+            createdAt: Date;
             categoryId: string;
         }) | null;
     } & {
         id: string;
-        createdAt: Date;
         name: string;
         organizationId: string;
+        createdAt: Date;
         description: string | null;
         subcategoryId: string | null;
         price: number;
@@ -38,22 +38,22 @@ export declare class ProductsService {
         Subcategory: ({
             Category: {
                 id: string;
-                createdAt: Date;
                 name: string;
                 organizationId: string;
+                createdAt: Date;
             };
         } & {
             id: string;
-            createdAt: Date;
             name: string;
             organizationId: string;
+            createdAt: Date;
             categoryId: string;
         }) | null;
     } & {
         id: string;
-        createdAt: Date;
         name: string;
         organizationId: string;
+        createdAt: Date;
         description: string | null;
         subcategoryId: string | null;
         price: number;
@@ -64,9 +64,9 @@ export declare class ProductsService {
     }>;
     create(organizationId: string, data: any): Promise<{
         id: string;
-        createdAt: Date;
         name: string;
         organizationId: string;
+        createdAt: Date;
         description: string | null;
         subcategoryId: string | null;
         price: number;
@@ -77,9 +77,9 @@ export declare class ProductsService {
     }>;
     update(id: string, organizationId: string, data: any): Promise<{
         id: string;
-        createdAt: Date;
         name: string;
         organizationId: string;
+        createdAt: Date;
         description: string | null;
         subcategoryId: string | null;
         price: number;
@@ -90,9 +90,9 @@ export declare class ProductsService {
     }>;
     remove(id: string, organizationId: string): Promise<{
         id: string;
-        createdAt: Date;
         name: string;
         organizationId: string;
+        createdAt: Date;
         description: string | null;
         subcategoryId: string | null;
         price: number;
@@ -105,22 +105,22 @@ export declare class ProductsService {
         Subcategory: ({
             Category: {
                 id: string;
-                createdAt: Date;
                 name: string;
                 organizationId: string;
+                createdAt: Date;
             };
         } & {
             id: string;
-            createdAt: Date;
             name: string;
             organizationId: string;
+            createdAt: Date;
             categoryId: string;
         }) | null;
     } & {
         id: string;
-        createdAt: Date;
         name: string;
         organizationId: string;
+        createdAt: Date;
         description: string | null;
         subcategoryId: string | null;
         price: number;

@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Param, Query, HttpException, HttpStatus, Logger, UseGuards, Request } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Query, HttpException, HttpStatus, Logger, UseGuards, Request, HttpCode } from '@nestjs/common';
 import { WhatsappService } from './whatsapp.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
@@ -32,6 +32,7 @@ export class WhatsappController {
   }
 
   @Post('webhook')
+  @HttpCode(HttpStatus.OK)
   async handleWebhook(@Body() body: any) {
     this.logger.log('📩 Webhook recibido desde Meta');
 

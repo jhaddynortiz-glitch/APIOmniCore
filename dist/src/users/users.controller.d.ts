@@ -24,10 +24,10 @@ export declare class UsersController {
             globalRole: string;
         };
     } & {
-        createdAt: Date;
-        userId: string;
         organizationId: string;
+        createdAt: Date;
         role: string;
+        userId: string;
         status: string;
     })[]>;
     updateOrgMember(req: any, userId: string, data: {
@@ -40,17 +40,17 @@ export declare class UsersController {
             fullName: string | null;
         };
     } & {
-        createdAt: Date;
-        userId: string;
         organizationId: string;
+        createdAt: Date;
         role: string;
+        userId: string;
         status: string;
     }>;
     removeOrgMember(req: any, userId: string): Promise<{
-        createdAt: Date;
-        userId: string;
         organizationId: string;
+        createdAt: Date;
         role: string;
+        userId: string;
         status: string;
     }>;
     getMyInvitations(req: any): Promise<({
@@ -60,10 +60,10 @@ export declare class UsersController {
             slug: string;
         };
     } & {
-        createdAt: Date;
-        userId: string;
         organizationId: string;
+        createdAt: Date;
         role: string;
+        userId: string;
         status: string;
     })[]>;
     acceptInvitation(req: any, organizationId: string): Promise<{
@@ -72,10 +72,10 @@ export declare class UsersController {
             name: string;
         };
     } & {
-        createdAt: Date;
-        userId: string;
         organizationId: string;
+        createdAt: Date;
         role: string;
+        userId: string;
         status: string;
     }>;
     getMyMemberships(req: any): Promise<({
@@ -85,10 +85,10 @@ export declare class UsersController {
             slug: string;
         };
     } & {
-        createdAt: Date;
-        userId: string;
         organizationId: string;
+        createdAt: Date;
         role: string;
+        userId: string;
         status: string;
     })[]>;
     getAllOrgs(req: any): Promise<({
@@ -97,8 +97,8 @@ export declare class UsersController {
         };
     } & {
         id: string;
-        createdAt: Date;
         name: string;
+        createdAt: Date;
         slug: string;
         whatsappToken: string | null;
         whatsappPhoneId: string | null;

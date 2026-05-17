@@ -4,30 +4,30 @@ export declare class SubcategoriesController {
     constructor(subcategoriesService: SubcategoriesService);
     findAll(req: any, categoryId?: string): Promise<{
         id: string;
-        createdAt: Date;
         name: string;
         organizationId: string;
+        createdAt: Date;
         categoryId: string;
     }[]>;
     create(req: any, data: any): Promise<{
         id: string;
-        createdAt: Date;
         name: string;
         organizationId: string;
+        createdAt: Date;
         categoryId: string;
     }>;
     update(id: string, req: any, data: any): Promise<{
         id: string;
-        createdAt: Date;
         name: string;
         organizationId: string;
+        createdAt: Date;
         categoryId: string;
     }>;
     remove(id: string, req: any): Promise<{
         id: string;
-        createdAt: Date;
         name: string;
         organizationId: string;
+        createdAt: Date;
         categoryId: string;
     }>;
 }

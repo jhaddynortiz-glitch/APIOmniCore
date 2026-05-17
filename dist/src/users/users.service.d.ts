@@ -27,17 +27,17 @@ export declare class UsersService {
             fullName: string | null;
         };
     } & {
-        createdAt: Date;
-        userId: string;
         organizationId: string;
+        createdAt: Date;
         role: string;
+        userId: string;
         status: string;
     }>;
     removeOrgMember(userId: string, organizationId: string): Promise<{
-        createdAt: Date;
-        userId: string;
         organizationId: string;
+        createdAt: Date;
         role: string;
+        userId: string;
         status: string;
     }>;
     getOrgMembers(organizationId: string): Promise<({
@@ -49,10 +49,10 @@ export declare class UsersService {
             globalRole: string;
         };
     } & {
-        createdAt: Date;
-        userId: string;
         organizationId: string;
+        createdAt: Date;
         role: string;
+        userId: string;
         status: string;
     })[]>;
     getMyInvitations(userId: string): Promise<({
@@ -62,10 +62,10 @@ export declare class UsersService {
             slug: string;
         };
     } & {
-        createdAt: Date;
-        userId: string;
         organizationId: string;
+        createdAt: Date;
         role: string;
+        userId: string;
         status: string;
     })[]>;
     acceptInvitation(userId: string, organizationId: string): Promise<{
@@ -74,10 +74,10 @@ export declare class UsersService {
             name: string;
         };
     } & {
-        createdAt: Date;
-        userId: string;
         organizationId: string;
+        createdAt: Date;
         role: string;
+        userId: string;
         status: string;
     }>;
     getMyMemberships(userId: string): Promise<({
@@ -87,10 +87,10 @@ export declare class UsersService {
             slug: string;
         };
     } & {
-        createdAt: Date;
-        userId: string;
         organizationId: string;
+        createdAt: Date;
         role: string;
+        userId: string;
         status: string;
     })[]>;
     getAllPlatformOrganizations(): Promise<({
@@ -99,8 +99,8 @@ export declare class UsersService {
         };
     } & {
         id: string;
-        createdAt: Date;
         name: string;
+        createdAt: Date;
         slug: string;
         whatsappToken: string | null;
         whatsappPhoneId: string | null;
