@@ -2,6 +2,7 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { extname } from 'path';
 
+
 @Injectable()
 export class UploadService {
   private s3Client: S3Client;
@@ -9,7 +10,7 @@ export class UploadService {
 
   constructor() {
     this.bucketName = process.env.AWS_S3_BUCKET_NAME || '';
-    
+
     this.s3Client = new S3Client({
       region: process.env.AWS_REGION || 'us-east-1',
       credentials: {

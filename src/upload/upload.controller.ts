@@ -1,5 +1,6 @@
 import { Controller, Post, UseInterceptors, UploadedFile, HttpException, HttpStatus } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { memoryStorage } from 'multer';
 import { UploadService } from './upload.service';
 
 @Controller('upload')
@@ -9,6 +10,7 @@ export class UploadController {
   @Post()
   @UseInterceptors(
     FileInterceptor('file', {
+      storage: memoryStorage(),
       fileFilter: (req, file, cb) => {
         if (!file.mimetype.match(/\/(jpg|jpeg|png|gif|webp)$/)) {
           return cb(new HttpException('Solo se permiten imágenes', HttpStatus.BAD_REQUEST), false);
@@ -33,8 +35,9 @@ export class UploadController {
         filename: result.key,
         mimetype: file.mimetype,
       };
-    } catch (error) {
-      throw new HttpException('Error subiendo imagen a S3', HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch (error: any) {
+      const errorMsg = error.message || 'Error desconocido';
+      throw new HttpException(`Error subiendo imagen a S3: ${errorMsg}`, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

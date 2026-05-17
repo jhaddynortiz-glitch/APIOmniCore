@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UploadController = void 0;
 const common_1 = require("@nestjs/common");
 const platform_express_1 = require("@nestjs/platform-express");
+const multer_1 = require("multer");
 const upload_service_1 = require("./upload.service");
 let UploadController = class UploadController {
     uploadService;
@@ -34,7 +35,8 @@ let UploadController = class UploadController {
             };
         }
         catch (error) {
-            throw new common_1.HttpException('Error subiendo imagen a S3', common_1.HttpStatus.INTERNAL_SERVER_ERROR);
+            const errorMsg = error.message || 'Error desconocido';
+            throw new common_1.HttpException(`Error subiendo imagen a S3: ${errorMsg}`, common_1.HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 };
@@ -42,6 +44,7 @@ exports.UploadController = UploadController;
 __decorate([
     (0, common_1.Post)(),
     (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file', {
+        storage: (0, multer_1.memoryStorage)(),
         fileFilter: (req, file, cb) => {
             if (!file.mimetype.match(/\/(jpg|jpeg|png|gif|webp)$/)) {
                 return cb(new common_1.HttpException('Solo se permiten imágenes', common_1.HttpStatus.BAD_REQUEST), false);
