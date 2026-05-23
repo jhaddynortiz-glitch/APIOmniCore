@@ -104,8 +104,8 @@ export class WhatsappService {
       // MODO PRUEBA: Si el cliente no viene de un anuncio pero escribe literalmente el ID
       if (!matchedProduct && bodyText) {
         const testId = bodyText.trim();
-        // Solo buscamos si el texto parece un ID corto para no hacer queries innecesarias en mensajes largos
-        if (testId.length < 50) {
+        // Aumentado a 100 caracteres porque los IDs 'pfbid' de Facebook son muy largos (aprox 70 chars)
+        if (testId.length < 100) {
           matchedProduct = await this.prisma.product.findFirst({
             where: {
               organizationId: org.id,
