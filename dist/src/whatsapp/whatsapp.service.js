@@ -111,9 +111,27 @@ let WhatsappService = WhatsappService_1 = class WhatsappService {
             }
             const phoneNumber = message.from;
             const messageType = message.type;
-            const bodyText = message.text?.body;
+            let bodyText = message.text?.body;
             const location = message.location;
+            const referral = message.referral;
             this.logger.log(`🔍 [${org.name}] Procesando mensaje de ${phoneNumber}. Tipo: ${messageType}`);
+            if (referral && referral.source_type === 'ad' && referral.source_id) {
+                const adId = referral.source_id;
+                const product = await this.prisma.product.findFirst({
+                    where: {
+                        organizationId: org.id,
+                        facebookAdId: adId
+                    }
+                });
+                if (product) {
+                    this.logger.log(`🛍️ Anuncio vinculado al producto: ${product.name}`);
+                    bodyText = `[SISTEMA CONTEXTO: El cliente viene de un anuncio del producto "${product.name}". Su precio es ${product.currency} ${product.price}. La descripción del producto es: ${product.description || 'N/A'}].\n\nEl cliente dice: ${bodyText || 'Hola'}`;
+                }
+                else {
+                    this.logger.log(`🛍️ Anuncio detectado pero no vinculado a producto en DB: ${referral.headline}`);
+                    bodyText = `[SISTEMA CONTEXTO: El cliente viene del anuncio "${referral.headline}"]\n\nEl cliente dice: ${bodyText || 'Hola'}`;
+                }
+            }
             const contact = await this.prisma.contact.upsert({
                 where: {
                     organizationId_phoneNumber: {

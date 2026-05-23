@@ -33,6 +33,7 @@ export declare class ProductsService {
         currency: string;
         stock: number;
         isActive: boolean;
+        facebookAdId: string | null;
     })[]>;
     findOne(id: string, organizationId: string): Promise<{
         Subcategory: ({
@@ -61,6 +62,7 @@ export declare class ProductsService {
         currency: string;
         stock: number;
         isActive: boolean;
+        facebookAdId: string | null;
     }>;
     create(organizationId: string, data: any): Promise<{
         id: string;
@@ -74,6 +76,7 @@ export declare class ProductsService {
         currency: string;
         stock: number;
         isActive: boolean;
+        facebookAdId: string | null;
     }>;
     update(id: string, organizationId: string, data: any): Promise<{
         id: string;
@@ -87,6 +90,7 @@ export declare class ProductsService {
         currency: string;
         stock: number;
         isActive: boolean;
+        facebookAdId: string | null;
     }>;
     remove(id: string, organizationId: string): Promise<{
         id: string;
@@ -100,6 +104,7 @@ export declare class ProductsService {
         currency: string;
         stock: number;
         isActive: boolean;
+        facebookAdId: string | null;
     }>;
     findAllActiveForGpt(organizationId: string): Promise<({
         Subcategory: ({
@@ -128,5 +133,6 @@ export declare class ProductsService {
         currency: string;
         stock: number;
         isActive: boolean;
+        facebookAdId: string | null;
     })[]>;
 }

@@ -29,6 +29,7 @@ export declare class ProductsController {
         currency: string;
         stock: number;
         isActive: boolean;
+        facebookAdId: string | null;
     })[]>;
     findOne(id: string, req: any): Promise<{
         Subcategory: ({
@@ -57,6 +58,7 @@ export declare class ProductsController {
         currency: string;
         stock: number;
         isActive: boolean;
+        facebookAdId: string | null;
     }>;
     create(req: any, data: any): Promise<{
         id: string;
@@ -70,6 +72,7 @@ export declare class ProductsController {
         currency: string;
         stock: number;
         isActive: boolean;
+        facebookAdId: string | null;
     }>;
     update(id: string, req: any, data: any): Promise<{
         id: string;
@@ -83,6 +86,7 @@ export declare class ProductsController {
         currency: string;
         stock: number;
         isActive: boolean;
+        facebookAdId: string | null;
     }>;
     remove(id: string, req: any): Promise<{
         id: string;
@@ -96,5 +100,6 @@ export declare class ProductsController {
         currency: string;
         stock: number;
         isActive: boolean;
+        facebookAdId: string | null;
     }>;
 }

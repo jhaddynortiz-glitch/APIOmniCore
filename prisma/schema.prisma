@@ -99,6 +99,7 @@ model Product {
   currency       String       @default("Bs")
   stock          Int          @default(0)
   isActive       Boolean      @default(true)
+  facebookAdId   String?
   subcategoryId  String?
   Subcategory    Subcategory? @relation(fields: [subcategoryId], references: [id])
   organizationId String
