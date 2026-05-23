@@ -105,8 +105,21 @@ model Product {
   organizationId String
   Organization   Organization @relation(fields: [organizationId], references: [id])
   createdAt      DateTime     @default(now())
+  ads            ProductAd[]
 
   @@index([organizationId])
+}
+
+model ProductAd {
+  id        String   @id @default(uuid())
+  adId      String
+  platform  String   @default("meta") // meta, tiktok, instagram
+  productId String
+  Product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@index([productId])
+  @@index([adId])
 }
 
 model Prompt {

@@ -21,19 +21,26 @@ export declare class ProductsService {
             createdAt: Date;
             categoryId: string;
         }) | null;
+        ads: {
+            id: string;
+            createdAt: Date;
+            adId: string;
+            platform: string;
+            productId: string;
+        }[];
     } & {
         id: string;
         name: string;
         organizationId: string;
         createdAt: Date;
         description: string | null;
-        subcategoryId: string | null;
         price: number;
         imageUrl: string | null;
         currency: string;
         stock: number;
         isActive: boolean;
         facebookAdId: string | null;
+        subcategoryId: string | null;
     })[]>;
     findOne(id: string, organizationId: string): Promise<{
         Subcategory: ({
@@ -50,19 +57,26 @@ export declare class ProductsService {
             createdAt: Date;
             categoryId: string;
         }) | null;
+        ads: {
+            id: string;
+            createdAt: Date;
+            adId: string;
+            platform: string;
+            productId: string;
+        }[];
     } & {
         id: string;
         name: string;
         organizationId: string;
         createdAt: Date;
         description: string | null;
-        subcategoryId: string | null;
         price: number;
         imageUrl: string | null;
         currency: string;
         stock: number;
         isActive: boolean;
         facebookAdId: string | null;
+        subcategoryId: string | null;
     }>;
     create(organizationId: string, data: any): Promise<{
         id: string;
@@ -70,13 +84,13 @@ export declare class ProductsService {
         organizationId: string;
         createdAt: Date;
         description: string | null;
-        subcategoryId: string | null;
         price: number;
         imageUrl: string | null;
         currency: string;
         stock: number;
         isActive: boolean;
         facebookAdId: string | null;
+        subcategoryId: string | null;
     }>;
     update(id: string, organizationId: string, data: any): Promise<{
         id: string;
@@ -84,13 +98,13 @@ export declare class ProductsService {
         organizationId: string;
         createdAt: Date;
         description: string | null;
-        subcategoryId: string | null;
         price: number;
         imageUrl: string | null;
         currency: string;
         stock: number;
         isActive: boolean;
         facebookAdId: string | null;
+        subcategoryId: string | null;
     }>;
     remove(id: string, organizationId: string): Promise<{
         id: string;
@@ -98,13 +112,13 @@ export declare class ProductsService {
         organizationId: string;
         createdAt: Date;
         description: string | null;
-        subcategoryId: string | null;
         price: number;
         imageUrl: string | null;
         currency: string;
         stock: number;
         isActive: boolean;
         facebookAdId: string | null;
+        subcategoryId: string | null;
     }>;
     findAllActiveForGpt(organizationId: string): Promise<({
         Subcategory: ({
@@ -127,12 +141,12 @@ export declare class ProductsService {
         organizationId: string;
         createdAt: Date;
         description: string | null;
-        subcategoryId: string | null;
         price: number;
         imageUrl: string | null;
         currency: string;
         stock: number;
         isActive: boolean;
         facebookAdId: string | null;
+        subcategoryId: string | null;
     })[]>;
 }

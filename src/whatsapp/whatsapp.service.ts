@@ -89,7 +89,7 @@ export class WhatsappService {
         matchedProduct = await this.prisma.product.findFirst({
           where: {
             organizationId: org.id,
-            facebookAdId: { contains: adId }
+            ads: { some: { adId: { contains: adId } } }
           }
         });
 
@@ -109,7 +109,7 @@ export class WhatsappService {
           matchedProduct = await this.prisma.product.findFirst({
             where: {
               organizationId: org.id,
-              facebookAdId: { contains: testId }
+              ads: { some: { adId: { contains: testId } } }
             }
           });
           if (matchedProduct) {

@@ -121,7 +121,7 @@ let WhatsappService = WhatsappService_1 = class WhatsappService {
                 matchedProduct = await this.prisma.product.findFirst({
                     where: {
                         organizationId: org.id,
-                        facebookAdId: adId
+                        ads: { some: { adId: { contains: adId } } }
                     }
                 });
                 if (matchedProduct) {
@@ -138,7 +138,7 @@ let WhatsappService = WhatsappService_1 = class WhatsappService {
                     matchedProduct = await this.prisma.product.findFirst({
                         where: {
                             organizationId: org.id,
-                            facebookAdId: testId
+                            ads: { some: { adId: { contains: testId } } }
                         }
                     });
                     if (matchedProduct) {

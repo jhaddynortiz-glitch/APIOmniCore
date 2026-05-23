@@ -17,19 +17,26 @@ export declare class ProductsController {
             createdAt: Date;
             categoryId: string;
         }) | null;
+        ads: {
+            id: string;
+            createdAt: Date;
+            adId: string;
+            platform: string;
+            productId: string;
+        }[];
     } & {
         id: string;
         name: string;
         organizationId: string;
         createdAt: Date;
         description: string | null;
-        subcategoryId: string | null;
         price: number;
         imageUrl: string | null;
         currency: string;
         stock: number;
         isActive: boolean;
         facebookAdId: string | null;
+        subcategoryId: string | null;
     })[]>;
     findOne(id: string, req: any): Promise<{
         Subcategory: ({
@@ -46,19 +53,26 @@ export declare class ProductsController {
             createdAt: Date;
             categoryId: string;
         }) | null;
+        ads: {
+            id: string;
+            createdAt: Date;
+            adId: string;
+            platform: string;
+            productId: string;
+        }[];
     } & {
         id: string;
         name: string;
         organizationId: string;
         createdAt: Date;
         description: string | null;
-        subcategoryId: string | null;
         price: number;
         imageUrl: string | null;
         currency: string;
         stock: number;
         isActive: boolean;
         facebookAdId: string | null;
+        subcategoryId: string | null;
     }>;
     create(req: any, data: any): Promise<{
         id: string;
@@ -66,13 +80,13 @@ export declare class ProductsController {
         organizationId: string;
         createdAt: Date;
         description: string | null;
-        subcategoryId: string | null;
         price: number;
         imageUrl: string | null;
         currency: string;
         stock: number;
         isActive: boolean;
         facebookAdId: string | null;
+        subcategoryId: string | null;
     }>;
     update(id: string, req: any, data: any): Promise<{
         id: string;
@@ -80,13 +94,13 @@ export declare class ProductsController {
         organizationId: string;
         createdAt: Date;
         description: string | null;
-        subcategoryId: string | null;
         price: number;
         imageUrl: string | null;
         currency: string;
         stock: number;
         isActive: boolean;
         facebookAdId: string | null;
+        subcategoryId: string | null;
     }>;
     remove(id: string, req: any): Promise<{
         id: string;
@@ -94,12 +108,12 @@ export declare class ProductsController {
         organizationId: string;
         createdAt: Date;
         description: string | null;
-        subcategoryId: string | null;
         price: number;
         imageUrl: string | null;
         currency: string;
         stock: number;
         isActive: boolean;
         facebookAdId: string | null;
+        subcategoryId: string | null;
     }>;
 }

@@ -31,6 +31,7 @@ let ProductsService = class ProductsService {
         return this.prisma.product.findMany({
             where,
             include: {
+                ads: true,
                 Subcategory: {
                     include: { Category: true }
                 }
@@ -42,6 +43,7 @@ let ProductsService = class ProductsService {
         const product = await this.prisma.product.findFirst({
             where: { id, organizationId },
             include: {
+                ads: true,
                 Subcategory: {
                     include: { Category: true }
                 }
@@ -52,19 +54,36 @@ let ProductsService = class ProductsService {
         return product;
     }
     async create(organizationId, data) {
-        const { id, ...createData } = data;
+        const { id, ads, ...createData } = data;
         return this.prisma.product.create({
             data: {
                 ...createData,
                 organizationId,
+                ads: ads && ads.length > 0 ? {
+                    create: ads.map((ad) => ({
+                        adId: ad.adId,
+                        platform: ad.platform || 'meta'
+                    }))
+                } : undefined
             },
         });
     }
     async update(id, organizationId, data) {
         await this.findOne(id, organizationId);
+        const { ads, ...updateData } = data;
+        const adsOperation = ads ? {
+            deleteMany: {},
+            create: ads.map((ad) => ({
+                adId: ad.adId,
+                platform: ad.platform || 'meta'
+            }))
+        } : undefined;
         return this.prisma.product.update({
             where: { id },
-            data,
+            data: {
+                ...updateData,
+                ...(adsOperation ? { ads: adsOperation } : {})
+            },
         });
     }
     async remove(id, organizationId) {
