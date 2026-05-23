@@ -58,6 +58,7 @@ export declare class WhatsappService {
         mediaUrl: string | null;
         mimeType: string | null;
     }>;
+    private autoReplyWithProductDetails;
     private autoReplyWithGpt;
     private autoReplyWithLocation;
     private calculateDistance;

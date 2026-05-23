@@ -115,21 +115,35 @@ let WhatsappService = WhatsappService_1 = class WhatsappService {
             const location = message.location;
             const referral = message.referral;
             this.logger.log(`🔍 [${org.name}] Procesando mensaje de ${phoneNumber}. Tipo: ${messageType}`);
+            let matchedProduct = null;
             if (referral && referral.source_type === 'ad' && referral.source_id) {
                 const adId = referral.source_id;
-                const product = await this.prisma.product.findFirst({
+                matchedProduct = await this.prisma.product.findFirst({
                     where: {
                         organizationId: org.id,
                         facebookAdId: adId
                     }
                 });
-                if (product) {
-                    this.logger.log(`🛍️ Anuncio vinculado al producto: ${product.name}`);
-                    bodyText = `[SISTEMA CONTEXTO: El cliente viene de un anuncio del producto "${product.name}". Su precio es ${product.currency} ${product.price}. La descripción del producto es: ${product.description || 'N/A'}].\n\nEl cliente dice: ${bodyText || 'Hola'}`;
+                if (matchedProduct) {
+                    this.logger.log(`🛍️ Anuncio vinculado al producto: ${matchedProduct.name} (ID: ${adId})`);
                 }
                 else {
-                    this.logger.log(`🛍️ Anuncio detectado pero no vinculado a producto en DB: ${referral.headline}`);
+                    this.logger.log(`🛍️ Anuncio (ID: ${adId}) detectado pero no vinculado a producto en DB: ${referral.headline}`);
                     bodyText = `[SISTEMA CONTEXTO: El cliente viene del anuncio "${referral.headline}"]\n\nEl cliente dice: ${bodyText || 'Hola'}`;
+                }
+            }
+            if (!matchedProduct && bodyText) {
+                const testId = bodyText.trim();
+                if (testId.length < 100) {
+                    matchedProduct = await this.prisma.product.findFirst({
+                        where: {
+                            organizationId: org.id,
+                            facebookAdId: testId
+                        }
+                    });
+                    if (matchedProduct) {
+                        this.logger.log(`🛠️ [MODO PRUEBA] El texto enviado coincide con el ID de anuncio: ${matchedProduct.name}`);
+                    }
                 }
             }
             const contact = await this.prisma.contact.upsert({
@@ -199,9 +213,16 @@ let WhatsappService = WhatsappService_1 = class WhatsappService {
                 }
             }
             else if (savedBody) {
-                this.autoReplyWithGpt(org.id, contact.id, savedBody).catch(err => {
-                    this.logger.error('Error en auto-reply GPT', err.message);
-                });
+                if (matchedProduct) {
+                    this.autoReplyWithProductDetails(org.id, contact.id, matchedProduct).catch(err => {
+                        this.logger.error('Error en auto-reply con detalles del producto', err.message);
+                    });
+                }
+                else {
+                    this.autoReplyWithGpt(org.id, contact.id, savedBody).catch(err => {
+                        this.logger.error('Error en auto-reply GPT', err.message);
+                    });
+                }
             }
             return createdMessage;
         }
@@ -298,6 +319,20 @@ let WhatsappService = WhatsappService_1 = class WhatsappService {
         catch (error) {
             this.logger.error(`Error enviando mensaje a contacto ${contactId}`, error.stack);
             throw error;
+        }
+    }
+    async autoReplyWithProductDetails(orgId, contactId, product) {
+        const caption = `📦 *${product.name}*\n\n${product.description ? product.description + '\n\n' : ''}💰 *Precio:* ${product.currency} ${product.price}\n\n¿En qué te podemos ayudar?`;
+        if (product.imageUrl) {
+            let finalUrl = product.imageUrl;
+            if (!finalUrl.startsWith('http')) {
+                const baseUrl = process.env.API_URL || 'http://localhost:3000';
+                finalUrl = `${baseUrl}${finalUrl}`;
+            }
+            await this.sendMessage(contactId, caption, 'image', finalUrl);
+        }
+        else {
+            await this.sendMessage(contactId, caption, 'text');
         }
     }
     async autoReplyWithGpt(orgId, contactId, userMessage) {
