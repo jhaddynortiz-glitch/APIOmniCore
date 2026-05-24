@@ -82,7 +82,15 @@ export class WhatsappController {
     @Body('type') type?: string,
     @Body('mediaUrl') mediaUrl?: string
   ) {
-    return await this.whatsappService.sendMessage(contactId, text, type, mediaUrl);
+    try {
+      return await this.whatsappService.sendMessage(contactId, text, type, mediaUrl);
+    } catch (error) {
+      this.logger.error(`Error enviando mensaje por WhatsApp a contacto ${contactId}: ${error.message}`);
+      throw new HttpException(
+        error.message || 'Error al enviar el mensaje por WhatsApp',
+        HttpStatus.BAD_REQUEST
+      );
+    }
   }
 
   @UseGuards(JwtAuthGuard)
