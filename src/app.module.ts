@@ -14,6 +14,8 @@ import { CategoriesModule } from './categories/categories.module';
 import { SubcategoriesModule } from './subcategories/subcategories.module';
 import { OrganizationsModule } from './organizations/organizations.module';
 import { LogisticsModule } from './logistics/logistics.module';
+import { TemplatesModule } from './templates/templates.module';
+import { OrdersModule } from './orders/orders.module';
 import { UploadController } from './upload/upload.controller';
 import { UploadService } from './upload/upload.service';
 
@@ -30,6 +32,8 @@ import { UploadService } from './upload/upload.service';
     SubcategoriesModule,
     OrganizationsModule,
     LogisticsModule,
+    TemplatesModule,
+    OrdersModule,
     ServeStaticModule.forRoot({
       rootPath: join(process.cwd(), 'public'),
     }),

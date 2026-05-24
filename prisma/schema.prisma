@@ -15,6 +15,7 @@ model Contact {
   createdAt      DateTime     @default(now())
   Organization   Organization @relation(fields: [organizationId], references: [id])
   messages       Message[]
+  orders         Order[]
 
   @@unique([organizationId, phoneNumber])
   @@index([organizationId])
@@ -57,6 +58,8 @@ model Organization {
   deliveryZones       DeliveryZone[]
   storeLocations      StoreLocation[]
   meetingPoints       MeetingPoint[]
+  orders              Order[]
+  templates           Template[]
 }
 
 model User {
@@ -115,6 +118,7 @@ model Product {
   isDeliveryEnabled Boolean      @default(true)
   isLocalEnabled    Boolean      @default(true)
   isMeetingEnabled  Boolean      @default(true)
+  orderItems        OrderItem[]
 
   @@index([organizationId])
 }
@@ -186,6 +190,7 @@ model StoreLocation {
   imageUrl       String?
   organizationId String
   Organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  orders         Order[]
   createdAt      DateTime     @default(now())
 
   @@index([organizationId])
@@ -199,7 +204,56 @@ model MeetingPoint {
   schedule       String
   organizationId String
   Organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  orders         Order[]
   createdAt      DateTime     @default(now())
+
+  @@index([organizationId])
+}
+
+model Order {
+  id              String         @id @default(uuid())
+  status          String         @default("PENDING") // PENDING, CONFIRMED, CANCELLED
+  deliveryMethod  String?        // DELIVERY, LOCAL, MEETING
+  deliveryCost    Float          @default(0)
+  shippingAddress String?
+  lat             Float?
+  lng             Float?
+  total           Float
+  organizationId  String
+  Organization    Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  contactId       String
+  Contact         Contact        @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  storeLocationId String?
+  StoreLocation   StoreLocation? @relation(fields: [storeLocationId], references: [id], onDelete: SetNull)
+  meetingPointId  String?
+  MeetingPoint    MeetingPoint?  @relation(fields: [meetingPointId], references: [id], onDelete: SetNull)
+  items           OrderItem[]
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@index([organizationId])
+  @@index([contactId])
+}
+
+model OrderItem {
+  id        String  @id @default(uuid())
+  orderId   String
+  Order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String
+  Product   Product @relation(fields: [productId], references: [id])
+  quantity  Int
+  price     Float
+}
+
+model Template {
+  id             String       @id @default(uuid())
+  name           String
+  content        String
+  isActive       Boolean      @default(true)
+  organizationId String
+  Organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 
   @@index([organizationId])
 }
