@@ -360,18 +360,53 @@ export class WhatsappService {
   }
 
   private async autoReplyWithLocation(orgId: string, contactId: string, lat: number, lng: number) {
-    const distanceKm = this.calculateDistance(
-      this.DELIVERY_CENTER.lat,
-      this.DELIVERY_CENTER.lng,
-      lat,
-      lng
-    );
+    // 1. Obtener todas las zonas de delivery configuradas para esta organización, incluyendo sus radios
+    const deliveryZones = await this.prisma.deliveryZone.findMany({
+      where: { organizationId: orgId },
+      include: {
+        radii: {
+          orderBy: { distanceKm: 'asc' }
+        }
+      }
+    });
 
-    const isInRange = distanceKm <= this.DELIVERY_CENTER.radiusKm;
+    let closestZone = null;
+    let closestRadius = null;
+    let minDistance = Infinity;
 
-    const locationContext = isInRange
-      ? `[SISTEMA: El cliente está a ${distanceKm.toFixed(1)} km. SÍ hay cobertura. Procesa el pedido.]`
-      : `[SISTEMA: El cliente está a ${distanceKm.toFixed(1)} km. NO hay cobertura. Sugiere recojo en tienda.]`;
+    // 2. Buscar si el cliente cae dentro del rango de alguna de las zonas
+    for (const zone of deliveryZones) {
+      const distance = this.calculateDistance(zone.lat, zone.lng, lat, lng);
+      
+      // Encontrar el primer radio que cubra esta distancia en esta zona
+      const matchingRadius = zone.radii.find(r => distance <= r.distanceKm);
+
+      if (matchingRadius) {
+        // Encontramos cobertura! Si es la más cercana o la primera, la registramos
+        if (distance < minDistance) {
+          minDistance = distance;
+          closestZone = zone;
+          closestRadius = matchingRadius;
+        }
+      } else {
+        // Si no está dentro de ningún radio, registramos la distancia al centro para informar
+        if (distance < minDistance) {
+          minDistance = distance;
+        }
+      }
+    }
+
+    let locationContext = '';
+
+    if (closestZone && closestRadius) {
+      // Sí está en cobertura!
+      this.logger.log(`📍 Cobertura de delivery detectada en ${closestZone.city} a ${minDistance.toFixed(2)} km. Tarifa: ${closestRadius.price} Bs.`);
+      locationContext = `[SISTEMA: El cliente ha enviado su ubicación. Se determinó que se encuentra en la ciudad de ${closestZone.city} a una distancia de ${minDistance.toFixed(1)} km de nuestro centro de envíos. SÍ hay cobertura. El costo de delivery es de ${closestRadius.price} Bs. Procesa el pedido informándole al cliente que el envío cuesta ${closestRadius.price} Bs y agrégalo al total de su compra.]`;
+    } else {
+      // Fuera de cobertura!
+      this.logger.warn(`📍 Ubicación fuera de cobertura. Distancia mínima al centro de envíos más cercano: ${minDistance.toFixed(2)} km.`);
+      locationContext = `[SISTEMA: El cliente ha enviado su ubicación. Se calculó que está a ${minDistance === Infinity ? 'muchos' : minDistance.toFixed(1)} km de distancia de nuestro centro de envíos más cercano. NO hay cobertura de delivery para su zona. Informa amablemente al cliente que lamentablemente no contamos con cobertura de delivery hasta esa dirección, y ofrécele de forma clara las sucursales físicas (locales) o puntos de encuentro disponibles para el recojo de su pedido.]`;
+    }
 
     const org = await this.prisma.organization.findUnique({ where: { id: orgId } });
     const decryptedApiKey = org?.openaiApiKey ? decrypt(org.openaiApiKey) : undefined;
