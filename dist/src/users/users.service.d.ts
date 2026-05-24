@@ -102,6 +102,9 @@ export declare class UsersService {
         name: string;
         createdAt: Date;
         slug: string;
+        isDeliveryEnabled: boolean;
+        isLocalEnabled: boolean;
+        isMeetingEnabled: boolean;
         whatsappToken: string | null;
         whatsappPhoneId: string | null;
         whatsappVerifyToken: string | null;

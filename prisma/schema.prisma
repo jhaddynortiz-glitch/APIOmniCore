@@ -51,6 +51,12 @@ model Organization {
   prompts             Prompt[]
   categories          Category[]
   subcategories       Subcategory[]
+  isDeliveryEnabled   Boolean            @default(false)
+  isLocalEnabled      Boolean            @default(false)
+  isMeetingEnabled    Boolean            @default(false)
+  deliveryZones       DeliveryZone[]
+  storeLocations      StoreLocation[]
+  meetingPoints       MeetingPoint[]
 }
 
 model User {
@@ -91,21 +97,24 @@ model Subcategory {
 }
 
 model Product {
-  id             String       @id @default(uuid())
-  name           String
-  description    String?
-  price          Float
-  imageUrl       String?
-  currency       String       @default("Bs")
-  stock          Int          @default(0)
-  isActive       Boolean      @default(true)
-  facebookAdId   String?
-  subcategoryId  String?
-  Subcategory    Subcategory? @relation(fields: [subcategoryId], references: [id])
-  organizationId String
-  Organization   Organization @relation(fields: [organizationId], references: [id])
-  createdAt      DateTime     @default(now())
-  ads            ProductAd[]
+  id                String       @id @default(uuid())
+  name              String
+  description       String?
+  price             Float
+  imageUrl          String?
+  currency          String       @default("Bs")
+  stock             Int          @default(0)
+  isActive          Boolean      @default(true)
+  facebookAdId      String?
+  subcategoryId     String?
+  Subcategory       Subcategory? @relation(fields: [subcategoryId], references: [id])
+  organizationId    String
+  Organization      Organization @relation(fields: [organizationId], references: [id])
+  createdAt         DateTime     @default(now())
+  ads               ProductAd[]
+  isDeliveryEnabled Boolean      @default(true)
+  isLocalEnabled    Boolean      @default(true)
+  isMeetingEnabled  Boolean      @default(true)
 
   @@index([organizationId])
 }
@@ -144,4 +153,53 @@ model UserOrganization {
   Organization   Organization @relation(fields: [organizationId], references: [id])
 
   @@id([userId, organizationId])
+}
+
+model DeliveryZone {
+  id             String           @id @default(uuid())
+  city           String
+  lat            Float
+  lng            Float
+  organizationId String
+  Organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  radii          DeliveryRadius[]
+  createdAt      DateTime         @default(now())
+
+  @@index([organizationId])
+}
+
+model DeliveryRadius {
+  id             String       @id @default(uuid())
+  distanceKm     Float
+  price          Float
+  deliveryZoneId String
+  DeliveryZone   DeliveryZone @relation(fields: [deliveryZoneId], references: [id], onDelete: Cascade)
+}
+
+model StoreLocation {
+  id             String       @id @default(uuid())
+  city           String
+  address        String
+  description    String?
+  lat            Float
+  lng            Float
+  imageUrl       String?
+  organizationId String
+  Organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now())
+
+  @@index([organizationId])
+}
+
+model MeetingPoint {
+  id             String       @id @default(uuid())
+  city           String
+  name           String
+  address        String?
+  schedule       String
+  organizationId String
+  Organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now())
+
+  @@index([organizationId])
 }

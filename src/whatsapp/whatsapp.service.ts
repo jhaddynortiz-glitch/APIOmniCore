@@ -14,7 +14,7 @@ export class WhatsappService {
     lat: -17.392774,
     lng: -66.158748,
     radiusKm: 5,
-  };
+  };//add comment
 
   constructor(
     private readonly prisma: PrismaService,
@@ -329,7 +329,7 @@ export class WhatsappService {
       await this.sendMessage(contactId, caption, 'image', finalUrl);
     } else {
       await this.sendMessage(contactId, caption, 'text');
-    }
+    } 
   }
 
   private async autoReplyWithGpt(orgId: string, contactId: string, userMessage: string) {

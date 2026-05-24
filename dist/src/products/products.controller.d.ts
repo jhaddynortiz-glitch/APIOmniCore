@@ -37,6 +37,9 @@ export declare class ProductsController {
         isActive: boolean;
         facebookAdId: string | null;
         subcategoryId: string | null;
+        isDeliveryEnabled: boolean;
+        isLocalEnabled: boolean;
+        isMeetingEnabled: boolean;
     })[]>;
     findOne(id: string, req: any): Promise<{
         Subcategory: ({
@@ -73,6 +76,9 @@ export declare class ProductsController {
         isActive: boolean;
         facebookAdId: string | null;
         subcategoryId: string | null;
+        isDeliveryEnabled: boolean;
+        isLocalEnabled: boolean;
+        isMeetingEnabled: boolean;
     }>;
     create(req: any, data: any): Promise<{
         id: string;
@@ -87,6 +93,9 @@ export declare class ProductsController {
         isActive: boolean;
         facebookAdId: string | null;
         subcategoryId: string | null;
+        isDeliveryEnabled: boolean;
+        isLocalEnabled: boolean;
+        isMeetingEnabled: boolean;
     }>;
     update(id: string, req: any, data: any): Promise<{
         id: string;
@@ -101,6 +110,9 @@ export declare class ProductsController {
         isActive: boolean;
         facebookAdId: string | null;
         subcategoryId: string | null;
+        isDeliveryEnabled: boolean;
+        isLocalEnabled: boolean;
+        isMeetingEnabled: boolean;
     }>;
     remove(id: string, req: any): Promise<{
         id: string;
@@ -115,5 +127,8 @@ export declare class ProductsController {
         isActive: boolean;
         facebookAdId: string | null;
         subcategoryId: string | null;
+        isDeliveryEnabled: boolean;
+        isLocalEnabled: boolean;
+        isMeetingEnabled: boolean;
     }>;
 }

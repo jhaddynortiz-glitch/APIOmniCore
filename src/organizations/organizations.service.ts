@@ -33,7 +33,10 @@ export class OrganizationsService {
       'whatsappVerifyToken', 
       'openaiApiKey',
       'googleClientId',
-      'googleClientSecret'
+      'googleClientSecret',
+      'isDeliveryEnabled',
+      'isLocalEnabled',
+      'isMeetingEnabled'
     ];
 
     const updateData: any = {};

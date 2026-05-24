@@ -13,6 +13,7 @@ import { PromptsModule } from './prompts/prompts.module';
 import { CategoriesModule } from './categories/categories.module';
 import { SubcategoriesModule } from './subcategories/subcategories.module';
 import { OrganizationsModule } from './organizations/organizations.module';
+import { LogisticsModule } from './logistics/logistics.module';
 import { UploadController } from './upload/upload.controller';
 import { UploadService } from './upload/upload.service';
 
@@ -28,6 +29,7 @@ import { UploadService } from './upload/upload.service';
     CategoriesModule,
     SubcategoriesModule,
     OrganizationsModule,
+    LogisticsModule,
     ServeStaticModule.forRoot({
       rootPath: join(process.cwd(), 'public'),
     }),

@@ -41,6 +41,9 @@ export declare class ProductsService {
         isActive: boolean;
         facebookAdId: string | null;
         subcategoryId: string | null;
+        isDeliveryEnabled: boolean;
+        isLocalEnabled: boolean;
+        isMeetingEnabled: boolean;
     })[]>;
     findOne(id: string, organizationId: string): Promise<{
         Subcategory: ({
@@ -77,6 +80,9 @@ export declare class ProductsService {
         isActive: boolean;
         facebookAdId: string | null;
         subcategoryId: string | null;
+        isDeliveryEnabled: boolean;
+        isLocalEnabled: boolean;
+        isMeetingEnabled: boolean;
     }>;
     create(organizationId: string, data: any): Promise<{
         id: string;
@@ -91,6 +97,9 @@ export declare class ProductsService {
         isActive: boolean;
         facebookAdId: string | null;
         subcategoryId: string | null;
+        isDeliveryEnabled: boolean;
+        isLocalEnabled: boolean;
+        isMeetingEnabled: boolean;
     }>;
     update(id: string, organizationId: string, data: any): Promise<{
         id: string;
@@ -105,6 +114,9 @@ export declare class ProductsService {
         isActive: boolean;
         facebookAdId: string | null;
         subcategoryId: string | null;
+        isDeliveryEnabled: boolean;
+        isLocalEnabled: boolean;
+        isMeetingEnabled: boolean;
     }>;
     remove(id: string, organizationId: string): Promise<{
         id: string;
@@ -119,6 +131,9 @@ export declare class ProductsService {
         isActive: boolean;
         facebookAdId: string | null;
         subcategoryId: string | null;
+        isDeliveryEnabled: boolean;
+        isLocalEnabled: boolean;
+        isMeetingEnabled: boolean;
     }>;
     findAllActiveForGpt(organizationId: string): Promise<({
         Subcategory: ({
@@ -148,5 +163,8 @@ export declare class ProductsService {
         isActive: boolean;
         facebookAdId: string | null;
         subcategoryId: string | null;
+        isDeliveryEnabled: boolean;
+        isLocalEnabled: boolean;
+        isMeetingEnabled: boolean;
     })[]>;
 }
