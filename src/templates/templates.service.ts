@@ -20,10 +20,11 @@ export class TemplatesService {
     return template;
   }
 
-  async create(organizationId: string, data: { name: string; content: string; isActive?: boolean }) {
+  async create(organizationId: string, data: { id?: string; name: string; content: string; isActive?: boolean }) {
+    const { id, ...templateData } = data;
     return this.prisma.template.create({
       data: {
-        ...data,
+        ...templateData,
         organizationId,
       },
     });

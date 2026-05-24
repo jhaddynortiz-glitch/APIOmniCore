@@ -62,6 +62,11 @@ REGLAS DE ORO:
         `- Ciudad: ${m.city} | Lugar: ${m.name} | Dirección: ${m.address} | Horarios de entrega: ${m.schedule}`
       ).join('\n') || 'No contamos con puntos de encuentro coordinados en este momento.';
 
+      // Obtener plantillas activas para poder llamarlas desde el prompt (ej: {{Nota de venta}})
+      const templates = await this.prisma.template.findMany({
+        where: { organizationId: orgId, isActive: true }
+      });
+
       const replacements: Record<string, string> = {
         '{{categorias}}': categoryNames || 'nuestro catálogo',
         '{{categories}}': categoryNames || 'our catalog',
@@ -70,6 +75,16 @@ REGLAS DE ORO:
         '{{locales}}': localesText,
         '{{encuentros}}': encuentrosText
       };
+
+      // Mapear cada plantilla en replacements
+      templates.forEach(t => {
+        // Mapeo exacto: {{Nota de venta}}
+        replacements[`{{${t.name}}}`] = t.content;
+        
+        // Mapeo normalizado: {{nota_de_venta}}
+        const snakeCaseName = t.name.toLowerCase().replace(/\s+/g, '_');
+        replacements[`{{${snakeCaseName}}}`] = t.content;
+      });
 
       for (const [key, value] of Object.entries(replacements)) {
         systemInstruction = (systemInstruction as any).replaceAll(key, value);
