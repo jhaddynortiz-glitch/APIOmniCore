@@ -16,7 +16,12 @@ export class ProductsService {
     }
 
     if (filters?.search) {
-      where.name = { contains: filters.search, mode: 'insensitive' };
+      const searchLower = filters.search.toLowerCase();
+      where.OR = [
+        { name: { contains: filters.search, mode: 'insensitive' } },
+        { description: { contains: filters.search, mode: 'insensitive' } },
+        { keywords: { hasSome: [filters.search, searchLower] } }
+      ];
     }
 
     return this.prisma.product.findMany({

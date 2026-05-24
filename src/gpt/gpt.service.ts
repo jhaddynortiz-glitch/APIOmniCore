@@ -170,13 +170,22 @@ REGLAS DE ORO:
 
           if (tc.function.name === 'consultar_productos') {
             const products = await this.productsService.findAll(orgId, { search: args.query });
-            result = products.slice(0, 15).map(p => 
-              `- ${p.name} | Precio: ${p.price} ${p.currency} | ID: ${p.id} ${p.imageUrl ? '[FOTO DISPONIBLE]' : '[SIN FOTO]'}`
-            ).join('\n') || 'No encontré productos con esos criterios.';
+            result = products.slice(0, 15).map(p => {
+              const template = (p as any).cardDescription || `*🛍️ {{nombre}}*\n\n📝 {{descripcion}}\n\n💵 *Precio:* {{precio}} {{moneda}}\n\n¿Cuántos te gustaría adquirir?`;
+              const formattedCard = template
+                .replace(/{{nombre}}/gi, p.name)
+                .replace(/{{descripcion}}/gi, p.description || '')
+                .replace(/{{precio}}/gi, String(p.price))
+                .replace(/{{moneda}}/gi, p.currency)
+                .replace(/{{stock}}/gi, String(p.stock));
+              
+              return `- ID: ${p.id} | ${p.name} | Precio: ${p.price} ${p.currency}\nPRESENTACIÓN DEL PRODUCTO (Envía este texto exacto al usuario):\n${formattedCard}\n[FOTO DEL PRODUCTO: ${(p as any).cardImageUrl || p.imageUrl || 'SIN FOTO'}]`;
+            }).join('\n\n---\n\n') || 'No encontré productos con esos criterios.';
           } 
           else if (tc.function.name === 'mostrar_imagen_producto') {
             const p = await this.prisma.product.findUnique({ where: { id: args.productId } });
-            if (p?.imageUrl) imageUrls.push(p.imageUrl);
+            const img = p ? ((p as any).cardImageUrl || p.imageUrl) : null;
+            if (img) imageUrls.push(img);
             result = p ? `Foto de ${p.name} enviada.` : 'No encontré ese producto.';
           }
 

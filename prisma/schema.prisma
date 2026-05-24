@@ -120,6 +120,9 @@ model Product {
   isLocalEnabled    Boolean      @default(true)
   isMeetingEnabled  Boolean      @default(true)
   orderItems        OrderItem[]
+  keywords          String[]     @default([])
+  cardDescription   String?
+  cardImageUrl      String?
 
   @@index([organizationId])
 }
