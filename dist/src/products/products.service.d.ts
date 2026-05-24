@@ -10,15 +10,15 @@ export declare class ProductsService {
         Subcategory: ({
             Category: {
                 id: string;
-                name: string;
-                organizationId: string;
                 createdAt: Date;
+                organizationId: string;
+                name: string;
             };
         } & {
             id: string;
-            name: string;
-            organizationId: string;
             createdAt: Date;
+            organizationId: string;
+            name: string;
             categoryId: string;
         }) | null;
         ads: {
@@ -28,11 +28,21 @@ export declare class ProductsService {
             platform: string;
             productId: string;
         }[];
+        triggers: {
+            id: string;
+            createdAt: Date;
+            productId: string;
+            keyword: string;
+            response: string;
+        }[];
     } & {
         id: string;
-        name: string;
-        organizationId: string;
         createdAt: Date;
+        organizationId: string;
+        name: string;
+        isDeliveryEnabled: boolean;
+        isLocalEnabled: boolean;
+        isMeetingEnabled: boolean;
         description: string | null;
         price: number;
         imageUrl: string | null;
@@ -41,23 +51,22 @@ export declare class ProductsService {
         isActive: boolean;
         facebookAdId: string | null;
         subcategoryId: string | null;
-        isDeliveryEnabled: boolean;
-        isLocalEnabled: boolean;
-        isMeetingEnabled: boolean;
+        cardDescription: string | null;
+        cardImageUrl: string | null;
     })[]>;
     findOne(id: string, organizationId: string): Promise<{
         Subcategory: ({
             Category: {
                 id: string;
-                name: string;
-                organizationId: string;
                 createdAt: Date;
+                organizationId: string;
+                name: string;
             };
         } & {
             id: string;
-            name: string;
-            organizationId: string;
             createdAt: Date;
+            organizationId: string;
+            name: string;
             categoryId: string;
         }) | null;
         ads: {
@@ -67,11 +76,21 @@ export declare class ProductsService {
             platform: string;
             productId: string;
         }[];
+        triggers: {
+            id: string;
+            createdAt: Date;
+            productId: string;
+            keyword: string;
+            response: string;
+        }[];
     } & {
         id: string;
-        name: string;
-        organizationId: string;
         createdAt: Date;
+        organizationId: string;
+        name: string;
+        isDeliveryEnabled: boolean;
+        isLocalEnabled: boolean;
+        isMeetingEnabled: boolean;
         description: string | null;
         price: number;
         imageUrl: string | null;
@@ -80,15 +99,32 @@ export declare class ProductsService {
         isActive: boolean;
         facebookAdId: string | null;
         subcategoryId: string | null;
-        isDeliveryEnabled: boolean;
-        isLocalEnabled: boolean;
-        isMeetingEnabled: boolean;
+        cardDescription: string | null;
+        cardImageUrl: string | null;
     }>;
     create(organizationId: string, data: any): Promise<{
+        ads: {
+            id: string;
+            createdAt: Date;
+            adId: string;
+            platform: string;
+            productId: string;
+        }[];
+        triggers: {
+            id: string;
+            createdAt: Date;
+            productId: string;
+            keyword: string;
+            response: string;
+        }[];
+    } & {
         id: string;
-        name: string;
-        organizationId: string;
         createdAt: Date;
+        organizationId: string;
+        name: string;
+        isDeliveryEnabled: boolean;
+        isLocalEnabled: boolean;
+        isMeetingEnabled: boolean;
         description: string | null;
         price: number;
         imageUrl: string | null;
@@ -97,15 +133,32 @@ export declare class ProductsService {
         isActive: boolean;
         facebookAdId: string | null;
         subcategoryId: string | null;
-        isDeliveryEnabled: boolean;
-        isLocalEnabled: boolean;
-        isMeetingEnabled: boolean;
+        cardDescription: string | null;
+        cardImageUrl: string | null;
     }>;
     update(id: string, organizationId: string, data: any): Promise<{
+        ads: {
+            id: string;
+            createdAt: Date;
+            adId: string;
+            platform: string;
+            productId: string;
+        }[];
+        triggers: {
+            id: string;
+            createdAt: Date;
+            productId: string;
+            keyword: string;
+            response: string;
+        }[];
+    } & {
         id: string;
-        name: string;
-        organizationId: string;
         createdAt: Date;
+        organizationId: string;
+        name: string;
+        isDeliveryEnabled: boolean;
+        isLocalEnabled: boolean;
+        isMeetingEnabled: boolean;
         description: string | null;
         price: number;
         imageUrl: string | null;
@@ -114,15 +167,17 @@ export declare class ProductsService {
         isActive: boolean;
         facebookAdId: string | null;
         subcategoryId: string | null;
-        isDeliveryEnabled: boolean;
-        isLocalEnabled: boolean;
-        isMeetingEnabled: boolean;
+        cardDescription: string | null;
+        cardImageUrl: string | null;
     }>;
     remove(id: string, organizationId: string): Promise<{
         id: string;
-        name: string;
-        organizationId: string;
         createdAt: Date;
+        organizationId: string;
+        name: string;
+        isDeliveryEnabled: boolean;
+        isLocalEnabled: boolean;
+        isMeetingEnabled: boolean;
         description: string | null;
         price: number;
         imageUrl: string | null;
@@ -131,30 +186,32 @@ export declare class ProductsService {
         isActive: boolean;
         facebookAdId: string | null;
         subcategoryId: string | null;
-        isDeliveryEnabled: boolean;
-        isLocalEnabled: boolean;
-        isMeetingEnabled: boolean;
+        cardDescription: string | null;
+        cardImageUrl: string | null;
     }>;
     findAllActiveForGpt(organizationId: string): Promise<({
         Subcategory: ({
             Category: {
                 id: string;
-                name: string;
-                organizationId: string;
                 createdAt: Date;
+                organizationId: string;
+                name: string;
             };
         } & {
             id: string;
-            name: string;
-            organizationId: string;
             createdAt: Date;
+            organizationId: string;
+            name: string;
             categoryId: string;
         }) | null;
     } & {
         id: string;
-        name: string;
-        organizationId: string;
         createdAt: Date;
+        organizationId: string;
+        name: string;
+        isDeliveryEnabled: boolean;
+        isLocalEnabled: boolean;
+        isMeetingEnabled: boolean;
         description: string | null;
         price: number;
         imageUrl: string | null;
@@ -163,8 +220,7 @@ export declare class ProductsService {
         isActive: boolean;
         facebookAdId: string | null;
         subcategoryId: string | null;
-        isDeliveryEnabled: boolean;
-        isLocalEnabled: boolean;
-        isMeetingEnabled: boolean;
+        cardDescription: string | null;
+        cardImageUrl: string | null;
     })[]>;
 }

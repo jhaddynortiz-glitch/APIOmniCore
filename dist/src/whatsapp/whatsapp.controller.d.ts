@@ -21,10 +21,10 @@ export declare class WhatsappController {
         }[];
     } & {
         id: string;
-        phoneNumber: string;
-        name: string | null;
-        organizationId: string;
         createdAt: Date;
+        organizationId: string;
+        name: string | null;
+        phoneNumber: string;
         unreadCount: number;
     })[]>;
     createContact(req: any, name: string, phoneNumber: string): Promise<{
@@ -40,10 +40,10 @@ export declare class WhatsappController {
         }[];
     } & {
         id: string;
-        phoneNumber: string;
-        name: string | null;
-        organizationId: string;
         createdAt: Date;
+        organizationId: string;
+        name: string | null;
+        phoneNumber: string;
         unreadCount: number;
     }>;
     getMessages(contactId: string, limit?: number, cursor?: string): Promise<{

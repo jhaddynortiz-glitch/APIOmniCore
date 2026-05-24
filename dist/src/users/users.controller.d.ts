@@ -24,10 +24,10 @@ export declare class UsersController {
             globalRole: string;
         };
     } & {
-        organizationId: string;
         createdAt: Date;
-        role: string;
         userId: string;
+        organizationId: string;
+        role: string;
         status: string;
     })[]>;
     updateOrgMember(req: any, userId: string, data: {
@@ -40,17 +40,17 @@ export declare class UsersController {
             fullName: string | null;
         };
     } & {
-        organizationId: string;
         createdAt: Date;
-        role: string;
         userId: string;
+        organizationId: string;
+        role: string;
         status: string;
     }>;
     removeOrgMember(req: any, userId: string): Promise<{
-        organizationId: string;
         createdAt: Date;
-        role: string;
         userId: string;
+        organizationId: string;
+        role: string;
         status: string;
     }>;
     getMyInvitations(req: any): Promise<({
@@ -60,10 +60,10 @@ export declare class UsersController {
             slug: string;
         };
     } & {
-        organizationId: string;
         createdAt: Date;
-        role: string;
         userId: string;
+        organizationId: string;
+        role: string;
         status: string;
     })[]>;
     acceptInvitation(req: any, organizationId: string): Promise<{
@@ -72,10 +72,10 @@ export declare class UsersController {
             name: string;
         };
     } & {
-        organizationId: string;
         createdAt: Date;
-        role: string;
         userId: string;
+        organizationId: string;
+        role: string;
         status: string;
     }>;
     getMyMemberships(req: any): Promise<({
@@ -85,10 +85,10 @@ export declare class UsersController {
             slug: string;
         };
     } & {
-        organizationId: string;
         createdAt: Date;
-        role: string;
         userId: string;
+        organizationId: string;
+        role: string;
         status: string;
     })[]>;
     getAllOrgs(req: any): Promise<({
@@ -97,18 +97,19 @@ export declare class UsersController {
         };
     } & {
         id: string;
-        name: string;
         createdAt: Date;
+        name: string;
         slug: string;
-        isDeliveryEnabled: boolean;
-        isLocalEnabled: boolean;
-        isMeetingEnabled: boolean;
         whatsappToken: string | null;
         whatsappPhoneId: string | null;
         whatsappVerifyToken: string | null;
         openaiApiKey: string | null;
         googleClientId: string | null;
         googleClientSecret: string | null;
+        logoUrl: string | null;
+        isDeliveryEnabled: boolean;
+        isLocalEnabled: boolean;
+        isMeetingEnabled: boolean;
     })[] | {
         status: string;
         message: string;

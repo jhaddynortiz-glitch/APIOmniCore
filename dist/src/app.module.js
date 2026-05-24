@@ -23,6 +23,8 @@ const categories_module_1 = require("./categories/categories.module");
 const subcategories_module_1 = require("./subcategories/subcategories.module");
 const organizations_module_1 = require("./organizations/organizations.module");
 const logistics_module_1 = require("./logistics/logistics.module");
+const templates_module_1 = require("./templates/templates.module");
+const orders_module_1 = require("./orders/orders.module");
 const upload_controller_1 = require("./upload/upload.controller");
 const upload_service_1 = require("./upload/upload.service");
 let AppModule = class AppModule {
@@ -42,6 +44,8 @@ exports.AppModule = AppModule = __decorate([
             subcategories_module_1.SubcategoriesModule,
             organizations_module_1.OrganizationsModule,
             logistics_module_1.LogisticsModule,
+            templates_module_1.TemplatesModule,
+            orders_module_1.OrdersModule,
             serve_static_1.ServeStaticModule.forRoot({
                 rootPath: (0, path_1.join)(process.cwd(), 'public'),
             }),

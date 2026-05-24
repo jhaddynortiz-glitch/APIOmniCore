@@ -230,6 +230,10 @@ export class WhatsappService {
           messages: {
             orderBy: { createdAt: 'desc' },
             take: 1
+          },
+          orders: {
+            orderBy: { createdAt: 'desc' },
+            take: 1
           }
         }
       });

@@ -57,12 +57,30 @@ REGLAS DE ORO:
             let systemInstruction = customPrompt?.content || this.DEFAULT_SYSTEM_PROMPT;
             const categories = await this.categoriesService.findAll(orgId);
             const categoryNames = categories.map(c => c.name).join(', ');
+            const storeLocations = await this.prisma.storeLocation.findMany({
+                where: { organizationId: orgId }
+            });
+            const localesText = storeLocations.map(s => `- Ciudad: ${s.city} | Dirección: ${s.address} ${s.description ? '| Info: ' + s.description : ''}`).join('\n') || 'No contamos con tiendas físicas en este momento.';
+            const meetingPoints = await this.prisma.meetingPoint.findMany({
+                where: { organizationId: orgId }
+            });
+            const encuentrosText = meetingPoints.map(m => `- Ciudad: ${m.city} | Lugar: ${m.name} | Dirección: ${m.address} | Horarios de entrega: ${m.schedule}`).join('\n') || 'No contamos con puntos de encuentro coordinados en este momento.';
+            const templates = await this.prisma.template.findMany({
+                where: { organizationId: orgId, isActive: true }
+            });
             const replacements = {
                 '{{categorias}}': categoryNames || 'nuestro catálogo',
                 '{{categories}}': categoryNames || 'our catalog',
                 '{{productos}}': 'Consulta el catálogo usando la herramienta "consultar_productos" cuando sea necesario.',
-                '{{products}}': 'Query the catalog using the "consultar_productos" tool when necessary.'
+                '{{products}}': 'Query the catalog using the "consultar_productos" tool when necessary.',
+                '{{locales}}': localesText,
+                '{{encuentros}}': encuentrosText
             };
+            templates.forEach(t => {
+                replacements[`{{${t.name}}}`] = t.content;
+                const snakeCaseName = t.name.toLowerCase().replace(/\s+/g, '_');
+                replacements[`{{${snakeCaseName}}}`] = t.content;
+            });
             for (const [key, value] of Object.entries(replacements)) {
                 systemInstruction = systemInstruction.replaceAll(key, value);
             }
@@ -133,12 +151,22 @@ REGLAS DE ORO:
                     let result = '';
                     if (tc.function.name === 'consultar_productos') {
                         const products = await this.productsService.findAll(orgId, { search: args.query });
-                        result = products.slice(0, 15).map(p => `- ${p.name} | Precio: ${p.price} ${p.currency} | ID: ${p.id} ${p.imageUrl ? '[FOTO DISPONIBLE]' : '[SIN FOTO]'}`).join('\n') || 'No encontré productos con esos criterios.';
+                        result = products.slice(0, 15).map(p => {
+                            const template = p.cardDescription || `*🛍️ {{nombre}}*\n\n📝 {{descripcion}}\n\n💵 *Precio:* {{precio}} {{moneda}}\n\n¿Cuántos te gustaría adquirir?`;
+                            const formattedCard = template
+                                .replace(/{{nombre}}/gi, p.name)
+                                .replace(/{{descripcion}}/gi, p.description || '')
+                                .replace(/{{precio}}/gi, String(p.price))
+                                .replace(/{{moneda}}/gi, p.currency)
+                                .replace(/{{stock}}/gi, String(p.stock));
+                            return `- ID: ${p.id} | ${p.name} | Precio: ${p.price} ${p.currency}\nPRESENTACIÓN DEL PRODUCTO (Envía este texto exacto al usuario):\n${formattedCard}\n[FOTO DEL PRODUCTO: ${p.cardImageUrl || p.imageUrl || 'SIN FOTO'}]`;
+                        }).join('\n\n---\n\n') || 'No encontré productos con esos criterios.';
                     }
                     else if (tc.function.name === 'mostrar_imagen_producto') {
                         const p = await this.prisma.product.findUnique({ where: { id: args.productId } });
-                        if (p?.imageUrl)
-                            imageUrls.push(p.imageUrl);
+                        const img = p ? (p.cardImageUrl || p.imageUrl) : null;
+                        if (img)
+                            imageUrls.push(img);
                         result = p ? `Foto de ${p.name} enviada.` : 'No encontré ese producto.';
                     }
                     conversationHistory.push({

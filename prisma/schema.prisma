@@ -61,6 +61,7 @@ model Organization {
   meetingPoints       MeetingPoint[]
   orders              Order[]
   templates           Template[]
+  operationContacts   OperationContact[]
 }
 
 model User {
@@ -74,6 +75,7 @@ model User {
   lastActiveOrganizationId   String?
   createdAt                  DateTime           @default(now())
   organizations              UserOrganization[]
+  operationContacts          OperationContact[]
 }
 
 model Category {
@@ -136,6 +138,22 @@ model ProductTrigger {
   createdAt DateTime @default(now())
 
   @@index([productId])
+}
+
+model OperationContact {
+  id             String       @id @default(uuid())
+  name           String
+  phoneNumber    String
+  type           String       // ADMIN or DELIVERY
+  userId         String?
+  User           User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+  organizationId String
+  Organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  ordersAssigned Order[]      @relation("DeliveryAssignment")
+  createdAt      DateTime     @default(now())
+
+  @@index([organizationId])
+  @@index([userId])
 }
 
 model ProductAd {
@@ -240,14 +258,17 @@ model Order {
   Contact         Contact        @relation(fields: [contactId], references: [id], onDelete: Cascade)
   storeLocationId String?
   StoreLocation   StoreLocation? @relation(fields: [storeLocationId], references: [id], onDelete: SetNull)
-  meetingPointId  String?
-  MeetingPoint    MeetingPoint?  @relation(fields: [meetingPointId], references: [id], onDelete: SetNull)
-  items           OrderItem[]
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
+  meetingPointId    String?
+  MeetingPoint      MeetingPoint?  @relation(fields: [meetingPointId], references: [id], onDelete: SetNull)
+  deliveryContactId String?
+  DeliveryContact   OperationContact? @relation("DeliveryAssignment", fields: [deliveryContactId], references: [id], onDelete: SetNull)
+  items             OrderItem[]
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
 
   @@index([organizationId])
   @@index([contactId])
+  @@index([deliveryContactId])
 }
 
 model OrderItem {

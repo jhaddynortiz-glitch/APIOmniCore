@@ -32,10 +32,10 @@ export declare class WhatsappService {
         }[];
     } & {
         id: string;
-        phoneNumber: string;
-        name: string | null;
-        organizationId: string;
         createdAt: Date;
+        organizationId: string;
+        name: string | null;
+        phoneNumber: string;
         unreadCount: number;
     })[]>;
     getMessages(contactId: string, limit?: number, cursor?: string): Promise<{
@@ -78,12 +78,13 @@ export declare class WhatsappService {
         }[];
     } & {
         id: string;
-        phoneNumber: string;
-        name: string | null;
-        organizationId: string;
         createdAt: Date;
+        organizationId: string;
+        name: string | null;
+        phoneNumber: string;
         unreadCount: number;
     }>;
     private downloadWhatsappMedia;
+    private checkForTriggers;
     private toRad;
 }

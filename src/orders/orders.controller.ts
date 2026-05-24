@@ -23,8 +23,8 @@ export class OrdersController {
   }
 
   @Patch(':id/status')
-  updateStatus(@Param('id') id: string, @Request() req: any, @Body() body: { status: string }) {
-    return this.ordersService.updateStatus(id, req.user.orgId, body.status);
+  updateStatus(@Param('id') id: string, @Request() req: any, @Body() body: { status: string; deliveryContactId?: string }) {
+    return this.ordersService.updateStatus(id, req.user.orgId, body.status, body.deliveryContactId);
   }
 
   @Delete(':id')

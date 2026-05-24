@@ -213,6 +213,12 @@ let WhatsappService = WhatsappService_1 = class WhatsappService {
                 }
             }
             else if (savedBody) {
+                const matchedTrigger = await this.checkForTriggers(org.id, savedBody);
+                if (matchedTrigger) {
+                    this.logger.log(`🎯 Disparador de servidor activado por palabra clave: "${matchedTrigger.keyword}"`);
+                    await this.sendMessage(contact.id, matchedTrigger.response);
+                    return createdMessage;
+                }
                 if (matchedProduct) {
                     this.autoReplyWithProductDetails(org.id, contact.id, matchedProduct).catch(err => {
                         this.logger.error('Error en auto-reply con detalles del producto', err.message);
@@ -357,11 +363,42 @@ let WhatsappService = WhatsappService_1 = class WhatsappService {
         await this.sendMessage(contactId, text);
     }
     async autoReplyWithLocation(orgId, contactId, lat, lng) {
-        const distanceKm = this.calculateDistance(this.DELIVERY_CENTER.lat, this.DELIVERY_CENTER.lng, lat, lng);
-        const isInRange = distanceKm <= this.DELIVERY_CENTER.radiusKm;
-        const locationContext = isInRange
-            ? `[SISTEMA: El cliente está a ${distanceKm.toFixed(1)} km. SÍ hay cobertura. Procesa el pedido.]`
-            : `[SISTEMA: El cliente está a ${distanceKm.toFixed(1)} km. NO hay cobertura. Sugiere recojo en tienda.]`;
+        const deliveryZones = await this.prisma.deliveryZone.findMany({
+            where: { organizationId: orgId },
+            include: {
+                radii: {
+                    orderBy: { distanceKm: 'asc' }
+                }
+            }
+        });
+        let closestZone = null;
+        let closestRadius = null;
+        let minDistance = Infinity;
+        for (const zone of deliveryZones) {
+            const distance = this.calculateDistance(zone.lat, zone.lng, lat, lng);
+            const matchingRadius = zone.radii.find(r => distance <= r.distanceKm);
+            if (matchingRadius) {
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    closestZone = zone;
+                    closestRadius = matchingRadius;
+                }
+            }
+            else {
+                if (distance < minDistance) {
+                    minDistance = distance;
+                }
+            }
+        }
+        let locationContext = '';
+        if (closestZone && closestRadius) {
+            this.logger.log(`📍 Cobertura de delivery detectada en ${closestZone.city} a ${minDistance.toFixed(2)} km. Tarifa: ${closestRadius.price} Bs.`);
+            locationContext = `[SISTEMA: El cliente ha enviado su ubicación. Se determinó que se encuentra en la ciudad de ${closestZone.city} a una distancia de ${minDistance.toFixed(1)} km de nuestro centro de envíos. SÍ hay cobertura. El costo de delivery es de ${closestRadius.price} Bs. Procesa el pedido informándole al cliente que el envío cuesta ${closestRadius.price} Bs y agrégalo al total de su compra.]`;
+        }
+        else {
+            this.logger.warn(`📍 Ubicación fuera de cobertura. Distancia mínima al centro de envíos más cercano: ${minDistance.toFixed(2)} km.`);
+            locationContext = `[SISTEMA: El cliente ha enviado su ubicación. Se calculó que está a ${minDistance === Infinity ? 'muchos' : minDistance.toFixed(1)} km de distancia de nuestro centro de envíos más cercano. NO hay cobertura de delivery para su zona. Informa amablemente al cliente que lamentablemente no contamos con cobertura de delivery hasta esa dirección, y ofrécele de forma clara las sucursales físicas (locales) o puntos de encuentro disponibles para el recojo de su pedido.]`;
+        }
         const org = await this.prisma.organization.findUnique({ where: { id: orgId } });
         const decryptedApiKey = org?.openaiApiKey ? (0, crypto_util_1.decrypt)(org.openaiApiKey) : undefined;
         const { text } = await this.gptService.generateReply(contactId, locationContext, decryptedApiKey, orgId);
@@ -451,6 +488,29 @@ let WhatsappService = WhatsappService_1 = class WhatsappService {
         fs.writeFileSync(filePath, Buffer.from(buffer));
         const baseUrl = process.env.API_URL || 'http://localhost:3000';
         return `${baseUrl}/uploads/${fileName}`;
+    }
+    async checkForTriggers(orgId, messageBody) {
+        try {
+            const messageLower = messageBody.toLowerCase();
+            const triggers = await this.prisma.productTrigger.findMany({
+                where: {
+                    Product: {
+                        organizationId: orgId,
+                        isActive: true
+                    }
+                }
+            });
+            for (const t of triggers) {
+                if (messageLower.includes(t.keyword.toLowerCase())) {
+                    return t;
+                }
+            }
+            return null;
+        }
+        catch (e) {
+            this.logger.error('Error checking triggers:', e);
+            return null;
+        }
     }
     toRad(deg) {
         return deg * (Math.PI / 180);

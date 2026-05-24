@@ -26,12 +26,17 @@ let ProductsService = class ProductsService {
             where.Subcategory = { categoryId: filters.categoryId };
         }
         if (filters?.search) {
-            where.name = { contains: filters.search, mode: 'insensitive' };
+            where.OR = [
+                { name: { contains: filters.search, mode: 'insensitive' } },
+                { description: { contains: filters.search, mode: 'insensitive' } },
+                { triggers: { some: { keyword: { contains: filters.search, mode: 'insensitive' } } } }
+            ];
         }
         return this.prisma.product.findMany({
             where,
             include: {
                 ads: true,
+                triggers: true,
                 Subcategory: {
                     include: { Category: true }
                 }
@@ -44,6 +49,7 @@ let ProductsService = class ProductsService {
             where: { id, organizationId },
             include: {
                 ads: true,
+                triggers: true,
                 Subcategory: {
                     include: { Category: true }
                 }
@@ -54,7 +60,7 @@ let ProductsService = class ProductsService {
         return product;
     }
     async create(organizationId, data) {
-        const { id, ads, ...createData } = data;
+        const { id, ads, triggers, ...createData } = data;
         return this.prisma.product.create({
             data: {
                 ...createData,
@@ -64,13 +70,23 @@ let ProductsService = class ProductsService {
                         adId: ad.adId,
                         platform: ad.platform || 'meta'
                     }))
+                } : undefined,
+                triggers: triggers && triggers.length > 0 ? {
+                    create: triggers.map((t) => ({
+                        keyword: t.keyword,
+                        response: t.response
+                    }))
                 } : undefined
             },
+            include: {
+                ads: true,
+                triggers: true
+            }
         });
     }
     async update(id, organizationId, data) {
         await this.findOne(id, organizationId);
-        const { ads, ...updateData } = data;
+        const { ads, triggers, ...updateData } = data;
         const adsOperation = ads ? {
             deleteMany: {},
             create: ads.map((ad) => ({
@@ -78,12 +94,24 @@ let ProductsService = class ProductsService {
                 platform: ad.platform || 'meta'
             }))
         } : undefined;
+        const triggersOperation = triggers ? {
+            deleteMany: {},
+            create: triggers.map((t) => ({
+                keyword: t.keyword,
+                response: t.response
+            }))
+        } : undefined;
         return this.prisma.product.update({
             where: { id },
             data: {
                 ...updateData,
-                ...(adsOperation ? { ads: adsOperation } : {})
+                ...(adsOperation ? { ads: adsOperation } : {}),
+                ...(triggersOperation ? { triggers: triggersOperation } : {})
             },
+            include: {
+                ads: true,
+                triggers: true
+            }
         });
     }
     async remove(id, organizationId) {

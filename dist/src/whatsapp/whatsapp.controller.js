@@ -55,7 +55,13 @@ let WhatsappController = WhatsappController_1 = class WhatsappController {
         return await this.whatsappService.getMessages(contactId, limit, cursor);
     }
     async sendMessage(contactId, text, type, mediaUrl) {
-        return await this.whatsappService.sendMessage(contactId, text, type, mediaUrl);
+        try {
+            return await this.whatsappService.sendMessage(contactId, text, type, mediaUrl);
+        }
+        catch (error) {
+            this.logger.error(`Error enviando mensaje por WhatsApp a contacto ${contactId}: ${error.message}`);
+            throw new common_1.HttpException(error.message || 'Error al enviar el mensaje por WhatsApp', common_1.HttpStatus.BAD_REQUEST);
+        }
     }
     async markAsRead(contactId) {
         return await this.whatsappService.markContactAsRead(contactId);

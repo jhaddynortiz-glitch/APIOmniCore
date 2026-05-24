@@ -1,9 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { WhatsappService } from '../whatsapp/whatsapp.service';
 
 @Injectable()
 export class OrdersService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private whatsappService: WhatsappService,
+  ) {}
 
   async findAll(organizationId: string) {
     return this.prisma.order.findMany({
@@ -12,6 +16,7 @@ export class OrdersService {
         Contact: true,
         StoreLocation: true,
         MeetingPoint: true,
+        DeliveryContact: true,
         items: {
           include: {
             Product: true,
@@ -29,6 +34,7 @@ export class OrdersService {
         Contact: true,
         StoreLocation: true,
         MeetingPoint: true,
+        DeliveryContact: true,
         items: {
           include: {
             Product: true,
@@ -58,7 +64,7 @@ export class OrdersService {
   ) {
     const { items, ...orderData } = data;
 
-    return this.prisma.order.create({
+    const order = await this.prisma.order.create({
       data: {
         ...orderData,
         organizationId,
@@ -71,6 +77,7 @@ export class OrdersService {
         },
       },
       include: {
+        Contact: true,
         items: {
           include: {
             Product: true,
@@ -78,14 +85,45 @@ export class OrdersService {
         },
       },
     });
+
+    if (order.status === 'EN_COLA') {
+      await this.notifyAdminsNewOrder(organizationId, order);
+    }
+
+    return order;
   }
 
-  async updateStatus(id: string, organizationId: string, status: string) {
-    await this.findOne(id, organizationId);
-    return this.prisma.order.update({
+  async updateStatus(id: string, organizationId: string, status: string, deliveryContactId?: string) {
+    const order = await this.findOne(id, organizationId);
+    const oldStatus = order.status;
+
+    const updatedOrder = await this.prisma.order.update({
       where: { id },
-      data: { status },
+      data: { 
+        status,
+        deliveryContactId: status === 'ASIGNADO' ? (deliveryContactId || null) : (status === 'PENDING' || status === 'EN_COLA' ? null : undefined)
+      },
+      include: {
+        Contact: true,
+        DeliveryContact: true,
+        items: {
+          include: {
+            Product: true,
+          },
+        },
+      },
     });
+
+    // Gatillar notificaciones si el estado cambia
+    if (oldStatus !== status) {
+      if (status === 'EN_COLA') {
+        await this.notifyAdminsNewOrder(organizationId, updatedOrder);
+      } else if (status === 'ASIGNADO' && updatedOrder.deliveryContactId) {
+        await this.notifyDeliveryAssigned(organizationId, updatedOrder);
+      }
+    }
+
+    return updatedOrder;
   }
 
   async remove(id: string, organizationId: string) {
@@ -93,5 +131,75 @@ export class OrdersService {
     return this.prisma.order.delete({
       where: { id },
     });
+  }
+
+  private async notifyAdminsNewOrder(organizationId: string, order: any) {
+    try {
+      const admins = await this.prisma.operationContact.findMany({
+        where: { organizationId, type: 'ADMIN' }
+      });
+
+      if (admins.length === 0) return;
+
+      const clientName = order.Contact?.name || 'Cliente';
+      const clientPhone = order.Contact?.phoneNumber || '';
+      const total = order.total;
+      const productsText = order.items.map((item: any) => 
+        `- ${item.quantity}x ${item.Product?.name || 'Producto'} (${item.price} Bs)`
+      ).join('\n');
+      
+      const address = order.shippingAddress || 'No especificada';
+      const mapsLink = (order.lat && order.lng) 
+        ? `\n🌍 *Ubicación GPS:* https://maps.google.com/?q=${order.lat},${order.lng}` 
+        : '';
+
+      const messageText = `🔔 *Nuevo Pedido Confirmado (En Cola)*\n\n` +
+                          `👤 *Cliente:* ${clientName} (${clientPhone})\n` +
+                          `💵 *Total:* ${total} Bs\n` +
+                          `📍 *Dirección:* ${address}${mapsLink}\n\n` +
+                          `📦 *Productos:* \n${productsText}\n\n` +
+                          `⚠️ Ingresa a la plataforma para asignar este pedido a un repartidor.`;
+
+      for (const admin of admins) {
+        const adminContact = await this.whatsappService.createContact(admin.name, admin.phoneNumber, organizationId);
+        await this.whatsappService.sendMessage(adminContact.id, messageText);
+      }
+    } catch (err) {
+      console.error('Error al notificar a los administradores:', err);
+    }
+  }
+
+  private async notifyDeliveryAssigned(organizationId: string, order: any) {
+    try {
+      const driver = await this.prisma.operationContact.findUnique({
+        where: { id: order.deliveryContactId }
+      });
+
+      if (!driver) return;
+
+      const clientName = order.Contact?.name || 'Cliente';
+      const clientPhone = order.Contact?.phoneNumber || '';
+      const total = order.total;
+      const productsText = order.items.map((item: any) => 
+        `- ${item.quantity}x ${item.Product?.name || 'Producto'} (${item.price} Bs)`
+      ).join('\n');
+      
+      const address = order.shippingAddress || 'No especificada';
+      const mapsLink = (order.lat && order.lng) 
+        ? `\n🌍 *Ubicación GPS:* https://maps.google.com/?q=${order.lat},${order.lng}` 
+        : '';
+
+      const messageText = `🛵 *Pedido Asignado para Entrega*\n\n` +
+                          `👤 *Cliente:* ${clientName} (${clientPhone})\n` +
+                          `📍 *Dirección de Entrega:* ${address}${mapsLink}\n\n` +
+                          `📦 *Productos:* \n${productsText}\n` +
+                          `💵 *Monto a Cobrar:* ${total} Bs\n\n` +
+                          `⚠️ Por favor, reporta cuando el pedido haya sido entregado.`;
+
+      const driverContact = await this.whatsappService.createContact(driver.name, driver.phoneNumber, organizationId);
+      await this.whatsappService.sendMessage(driverContact.id, messageText);
+    } catch (err) {
+      console.error('Error al notificar al repartidor:', err);
+    }
   }
 }

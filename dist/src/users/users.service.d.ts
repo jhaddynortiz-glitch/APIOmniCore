@@ -27,17 +27,17 @@ export declare class UsersService {
             fullName: string | null;
         };
     } & {
-        organizationId: string;
         createdAt: Date;
-        role: string;
         userId: string;
+        organizationId: string;
+        role: string;
         status: string;
     }>;
     removeOrgMember(userId: string, organizationId: string): Promise<{
-        organizationId: string;
         createdAt: Date;
-        role: string;
         userId: string;
+        organizationId: string;
+        role: string;
         status: string;
     }>;
     getOrgMembers(organizationId: string): Promise<({
@@ -49,10 +49,10 @@ export declare class UsersService {
             globalRole: string;
         };
     } & {
-        organizationId: string;
         createdAt: Date;
-        role: string;
         userId: string;
+        organizationId: string;
+        role: string;
         status: string;
     })[]>;
     getMyInvitations(userId: string): Promise<({
@@ -62,10 +62,10 @@ export declare class UsersService {
             slug: string;
         };
     } & {
-        organizationId: string;
         createdAt: Date;
-        role: string;
         userId: string;
+        organizationId: string;
+        role: string;
         status: string;
     })[]>;
     acceptInvitation(userId: string, organizationId: string): Promise<{
@@ -74,10 +74,10 @@ export declare class UsersService {
             name: string;
         };
     } & {
-        organizationId: string;
         createdAt: Date;
-        role: string;
         userId: string;
+        organizationId: string;
+        role: string;
         status: string;
     }>;
     getMyMemberships(userId: string): Promise<({
@@ -87,10 +87,10 @@ export declare class UsersService {
             slug: string;
         };
     } & {
-        organizationId: string;
         createdAt: Date;
-        role: string;
         userId: string;
+        organizationId: string;
+        role: string;
         status: string;
     })[]>;
     getAllPlatformOrganizations(): Promise<({
@@ -99,17 +99,18 @@ export declare class UsersService {
         };
     } & {
         id: string;
-        name: string;
         createdAt: Date;
+        name: string;
         slug: string;
-        isDeliveryEnabled: boolean;
-        isLocalEnabled: boolean;
-        isMeetingEnabled: boolean;
         whatsappToken: string | null;
         whatsappPhoneId: string | null;
         whatsappVerifyToken: string | null;
         openaiApiKey: string | null;
         googleClientId: string | null;
         googleClientSecret: string | null;
+        logoUrl: string | null;
+        isDeliveryEnabled: boolean;
+        isLocalEnabled: boolean;
+        isMeetingEnabled: boolean;
     })[]>;
 }

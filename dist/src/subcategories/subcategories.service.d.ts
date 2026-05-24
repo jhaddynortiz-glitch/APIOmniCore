@@ -5,36 +5,36 @@ export declare class SubcategoriesService {
     findAll(organizationId: string): Promise<({
         Category: {
             id: string;
-            name: string;
-            organizationId: string;
             createdAt: Date;
+            organizationId: string;
+            name: string;
         };
     } & {
         id: string;
-        name: string;
-        organizationId: string;
         createdAt: Date;
+        organizationId: string;
+        name: string;
         categoryId: string;
     })[]>;
     findByCategoryId(categoryId: string, organizationId: string): Promise<{
         id: string;
-        name: string;
-        organizationId: string;
         createdAt: Date;
+        organizationId: string;
+        name: string;
         categoryId: string;
     }[]>;
     findOne(id: string, organizationId: string): Promise<{
         Category: {
             id: string;
-            name: string;
-            organizationId: string;
             createdAt: Date;
+            organizationId: string;
+            name: string;
         };
     } & {
         id: string;
-        name: string;
-        organizationId: string;
         createdAt: Date;
+        organizationId: string;
+        name: string;
         categoryId: string;
     }>;
     create(organizationId: string, data: {
@@ -43,9 +43,9 @@ export declare class SubcategoriesService {
         id?: string;
     }): Promise<{
         id: string;
-        name: string;
-        organizationId: string;
         createdAt: Date;
+        organizationId: string;
+        name: string;
         categoryId: string;
     }>;
     update(id: string, organizationId: string, data: {
@@ -53,16 +53,16 @@ export declare class SubcategoriesService {
         categoryId: string;
     }): Promise<{
         id: string;
-        name: string;
-        organizationId: string;
         createdAt: Date;
+        organizationId: string;
+        name: string;
         categoryId: string;
     }>;
     remove(id: string, organizationId: string): Promise<{
         id: string;
-        name: string;
-        organizationId: string;
         createdAt: Date;
+        organizationId: string;
+        name: string;
         categoryId: string;
     }>;
 }
