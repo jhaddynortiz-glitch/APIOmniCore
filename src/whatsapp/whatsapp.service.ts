@@ -196,6 +196,14 @@ export class WhatsappService {
           this.logger.error('Error procesando imagen de WhatsApp', err.message);
         }
       } else if (savedBody) {
+        // Verificar Disparadores / Respuestas de Servidor primero
+        const matchedTrigger = await this.checkForTriggers(org.id, savedBody);
+        if (matchedTrigger) {
+          this.logger.log(`🎯 Disparador de servidor activado por palabra clave: "${matchedTrigger.keyword}"`);
+          await this.sendMessage(contact.id, matchedTrigger.response);
+          return createdMessage;
+        }
+
         if (matchedProduct) {
           this.autoReplyWithProductDetails(org.id, contact.id, matchedProduct).catch(err => {
             this.logger.error('Error en auto-reply con detalles del producto', err.message);
@@ -513,6 +521,32 @@ export class WhatsappService {
 
     const baseUrl = process.env.API_URL || 'http://localhost:3000';
     return `${baseUrl}/uploads/${fileName}`;
+  }
+
+  private async checkForTriggers(orgId: string, messageBody: string): Promise<any | null> {
+    try {
+      const messageLower = messageBody.toLowerCase();
+      // Buscamos todos los disparadores activos de los productos de esta organización
+      const triggers = await this.prisma.productTrigger.findMany({
+        where: {
+          Product: {
+            organizationId: orgId,
+            isActive: true
+          }
+        }
+      });
+
+      // Buscamos si el mensaje del usuario contiene alguna palabra clave del disparador (búsqueda substring)
+      for (const t of triggers) {
+        if (messageLower.includes(t.keyword.toLowerCase())) {
+          return t;
+        }
+      }
+      return null;
+    } catch (e) {
+      this.logger.error('Error checking triggers:', e);
+      return null;
+    }
   }
 
   private toRad(deg: number): number {

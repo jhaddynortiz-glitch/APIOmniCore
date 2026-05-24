@@ -120,11 +120,22 @@ model Product {
   isLocalEnabled    Boolean      @default(true)
   isMeetingEnabled  Boolean      @default(true)
   orderItems        OrderItem[]
-  keywords          String[]     @default([])
+  triggers          ProductTrigger[]
   cardDescription   String?
   cardImageUrl      String?
 
   @@index([organizationId])
+}
+
+model ProductTrigger {
+  id        String   @id @default(uuid())
+  keyword   String
+  response  String
+  productId String
+  Product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@index([productId])
 }
 
 model ProductAd {

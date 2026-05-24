@@ -16,11 +16,10 @@ export class ProductsService {
     }
 
     if (filters?.search) {
-      const searchLower = filters.search.toLowerCase();
       where.OR = [
         { name: { contains: filters.search, mode: 'insensitive' } },
         { description: { contains: filters.search, mode: 'insensitive' } },
-        { keywords: { hasSome: [filters.search, searchLower] } }
+        { triggers: { some: { keyword: { contains: filters.search, mode: 'insensitive' } } } }
       ];
     }
 
@@ -28,6 +27,7 @@ export class ProductsService {
       where,
       include: {
         ads: true,
+        triggers: true,
         Subcategory: {
           include: { Category: true }
         }
@@ -41,6 +41,7 @@ export class ProductsService {
       where: { id, organizationId },
       include: {
         ads: true,
+        triggers: true,
         Subcategory: {
           include: { Category: true }
         }
@@ -51,7 +52,7 @@ export class ProductsService {
   }
 
   async create(organizationId: string, data: any) {
-    const { id, ads, ...createData } = data;
+    const { id, ads, triggers, ...createData } = data;
     
     return this.prisma.product.create({
       data: {
@@ -62,15 +63,25 @@ export class ProductsService {
             adId: ad.adId,
             platform: ad.platform || 'meta'
           }))
+        } : undefined,
+        triggers: triggers && triggers.length > 0 ? {
+          create: triggers.map((t: any) => ({
+            keyword: t.keyword,
+            response: t.response
+          }))
         } : undefined
       },
+      include: {
+        ads: true,
+        triggers: true
+      }
     });
   }
 
   async update(id: string, organizationId: string, data: any) {
     await this.findOne(id, organizationId);
     
-    const { ads, ...updateData } = data;
+    const { ads, triggers, ...updateData } = data;
 
     // Si envían ads, borramos los anteriores y creamos los nuevos
     const adsOperation = ads ? {
@@ -81,12 +92,26 @@ export class ProductsService {
       }))
     } : undefined;
 
+    // Si envían triggers, borramos los anteriores y creamos los nuevos
+    const triggersOperation = triggers ? {
+      deleteMany: {},
+      create: triggers.map((t: any) => ({
+        keyword: t.keyword,
+        response: t.response
+      }))
+    } : undefined;
+
     return this.prisma.product.update({
       where: { id },
       data: {
         ...updateData,
-        ...(adsOperation ? { ads: adsOperation } : {})
+        ...(adsOperation ? { ads: adsOperation } : {}),
+        ...(triggersOperation ? { triggers: triggersOperation } : {})
       },
+      include: {
+        ads: true,
+        triggers: true
+      }
     });
   }
 
