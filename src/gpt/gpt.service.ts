@@ -47,11 +47,28 @@ REGLAS DE ORO:
       const categories = await this.categoriesService.findAll(orgId);
       const categoryNames = categories.map(c => c.name).join(', ');
 
+      // Obtener locales y puntos de encuentro de la organización para inyectar en el prompt
+      const storeLocations = await this.prisma.storeLocation.findMany({
+        where: { organizationId: orgId }
+      });
+      const localesText = storeLocations.map(s => 
+        `- Ciudad: ${s.city} | Dirección: ${s.address} ${s.description ? '| Info: ' + s.description : ''}`
+      ).join('\n') || 'No contamos con tiendas físicas en este momento.';
+
+      const meetingPoints = await this.prisma.meetingPoint.findMany({
+        where: { organizationId: orgId }
+      });
+      const encuentrosText = meetingPoints.map(m => 
+        `- Ciudad: ${m.city} | Lugar: ${m.name} | Dirección: ${m.address} | Horarios de entrega: ${m.schedule}`
+      ).join('\n') || 'No contamos con puntos de encuentro coordinados en este momento.';
+
       const replacements: Record<string, string> = {
         '{{categorias}}': categoryNames || 'nuestro catálogo',
         '{{categories}}': categoryNames || 'our catalog',
         '{{productos}}': 'Consulta el catálogo usando la herramienta "consultar_productos" cuando sea necesario.',
-        '{{products}}': 'Query the catalog using the "consultar_productos" tool when necessary.'
+        '{{products}}': 'Query the catalog using the "consultar_productos" tool when necessary.',
+        '{{locales}}': localesText,
+        '{{encuentros}}': encuentrosText
       };
 
       for (const [key, value] of Object.entries(replacements)) {
