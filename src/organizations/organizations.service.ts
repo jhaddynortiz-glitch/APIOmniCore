@@ -34,6 +34,7 @@ export class OrganizationsService {
       'openaiApiKey',
       'googleClientId',
       'googleClientSecret',
+      'logoUrl',
       'isDeliveryEnabled',
       'isLocalEnabled',
       'isMeetingEnabled'

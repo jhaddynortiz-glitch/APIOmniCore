@@ -45,6 +45,7 @@ model Organization {
   openaiApiKey        String?
   googleClientId      String?
   googleClientSecret  String?
+  logoUrl             String?
   createdAt           DateTime           @default(now())
   Contact             Contact[]
   users               UserOrganization[]
