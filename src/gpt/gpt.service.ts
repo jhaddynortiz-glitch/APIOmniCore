@@ -94,14 +94,7 @@ REGLAS DE ORO:
           'Query the catalog using the "consultar_productos" tool when necessary.',
         '{{locales}}': localesText,
         '{{encuentros}}': encuentrosText,
-        '{{card_producto}}': `[REGLA DEL SISTEMA SOBRE LA TARJETA DEL PRODUCTO]:
-Cuando uses tu herramienta de búsqueda y encuentres un producto específico, la herramienta te devolverá en sus resultados un texto pre-formateado. 
-
-Reglas estrictas al mostrar productos:
-1. NO debes escribir manualmente la tarjeta, ni inventar diseño, precio o beneficios, tampoco debes agregar nada adicional.
-2. DEBES COPIAR EXACTAMENTE el texto que la herramienta te dio bajo "[TARJETA DEL PRODUCTO]" y enviárselo al cliente.
-3. DEBES llamar OBLIGATORIAMENTE a tu herramienta "mostrar_imagen_producto" (pasando el ID del producto) para adjuntar la foto oficial junto a la tarjeta. NUNCA debes usar enlaces markdown.
-4. Antes de mostrar cualquier tarjeta, debes tener identificado un producto real.`,
+        '{{card_producto}}': `[REGLA: Para mostrar un producto, copia exactamente la tarjeta que te devuelve la herramienta "consultar_productos" y llama a la herramienta "mostrar_imagen_producto" con su ID. NUNCA inventes tarjetas.]`,
       };
 
       // Mapear cada plantilla en replacements
@@ -227,7 +220,7 @@ Reglas estrictas al mostrar productos:
                     .replace(/{{moneda}}/gi, p.currency)
                     .replace(/{{stock}}/gi, String(p.stock));
 
-                  return `- ID: ${p.id} | ${p.name}\n[TARJETA DEL PRODUCTO]:\n${formattedCard}`;
+                  return `- ID: ${p.id} | ${p.name}\n${formattedCard}\n[ACCIÓN OBLIGATORIA: Ejecuta AHORA MISMO la herramienta 'mostrar_imagen_producto' con productId '${p.id}'. Es la única forma de mandar la imagen. NO mandes links ni escribas manualmente 'Tarjeta del producto'. Copia el texto superior.]`;
                 })
                 .join('\n\n---\n\n') ||
               'No encontré productos con esos criterios.';
