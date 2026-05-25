@@ -95,7 +95,7 @@ REGLAS DE ORO:
         '{{locales}}': localesText,
         '{{encuentros}}': encuentrosText,
         '{{card_producto}}':
-          '[INSTRUCCIÓN OBLIGATORIA: Aquí debes estructurar la información del producto (Nombre, Precio, Descripción) en un formato atractivo y vendedor (usando emojis y negritas), y siempre debes usar la herramienta mostrar_imagen_producto para enviar su foto.]',
+          '[INSTRUCCIÓN OBLIGATORIA: Aquí debes insertar EXACTAMENTE el texto que aparece bajo "[TARJETA DEL PRODUCTO]" obtenido de tu herramienta consultar_productos, sin modificarle ni una sola coma, y usar la herramienta mostrar_imagen_producto]',
       };
 
       // Mapear cada plantilla en replacements
@@ -242,8 +242,11 @@ REGLAS DE ORO:
         }
       }
 
+      // Limpiar imágenes markdown que la IA haya alucinado en texto
+      const cleanReply = (finalReply || '¿En qué más puedo ayudarte?').replace(/!\[.*?\]\(.*?\)/g, '').trim();
+
       return {
-        text: finalReply || '¿En qué más puedo ayudarte?',
+        text: cleanReply,
         imageUrls: [...new Set(imageUrls)],
       };
     } catch (error: any) {
