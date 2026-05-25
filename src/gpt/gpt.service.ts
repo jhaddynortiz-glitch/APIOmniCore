@@ -206,11 +206,20 @@ REGLAS DE ORO:
             const products = await this.productsService.findAll(orgId, {
               search: args.query,
             });
-            result =
-              products
+            result = products
                 .slice(0, 15)
                 .map((p) => {
-                  return `- ID: ${p.id} | Nombre: ${p.name} | Precio: ${p.price} ${p.currency} | Descripción: ${p.description || 'Sin descripción'} | Stock: ${p.stock}\n[FOTO DEL PRODUCTO: ${(p as any).cardImageUrl || p.imageUrl || 'SIN FOTO'}]`;
+                  const template =
+                    (p as any).cardDescription ||
+                    `*🛍️ {{nombre}}*\n\n📝 {{descripcion}}\n\n💵 *Precio:* {{precio}} {{moneda}}\n\n¿Cuántos te gustaría adquirir?`;
+                  const formattedCard = template
+                    .replace(/{{nombre}}/gi, p.name)
+                    .replace(/{{descripcion}}/gi, p.description || '')
+                    .replace(/{{precio}}/gi, String(p.price))
+                    .replace(/{{moneda}}/gi, p.currency)
+                    .replace(/{{stock}}/gi, String(p.stock));
+
+                  return `- ID: ${p.id} | ${p.name}\n[TARJETA DEL PRODUCTO]:\n${formattedCard}\n[ACCIÓN OBLIGATORIA: Llama a la herramienta 'mostrar_imagen_producto' pasando el productId '${p.id}' para enviar la foto de este producto al cliente. ¡No uses enlaces markdown ni URLs en tu texto!]`;
                 })
                 .join('\n\n---\n\n') ||
               'No encontré productos con esos criterios.';
