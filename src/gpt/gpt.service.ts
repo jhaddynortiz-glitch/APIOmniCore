@@ -94,8 +94,6 @@ REGLAS DE ORO:
           'Query the catalog using the "consultar_productos" tool when necessary.',
         '{{locales}}': localesText,
         '{{encuentros}}': encuentrosText,
-        '{{card_producto}}':
-          '[INSTRUCCIÓN OBLIGATORIA: Aquí debes estructurar la información del producto (Nombre, Precio, Descripción) en un formato atractivo y vendedor (usando emojis y negritas), y siempre debes usar la herramienta mostrar_imagen_producto para enviar su foto.]',
       };
 
       // Mapear cada plantilla en replacements
@@ -209,7 +207,19 @@ REGLAS DE ORO:
             result = products
                 .slice(0, 15)
                 .map((p) => {
-                  return `- ID: ${p.id} | Nombre: ${p.name} | Precio: ${p.price} ${p.currency} | Descripción: ${p.description || 'Sin descripción'} | Stock: ${p.stock}\n[FOTO DEL PRODUCTO: ${(p as any).cardImageUrl || p.imageUrl || 'SIN FOTO'}]`;
+                  const hasCustomCard = (p as any).cardDescription && (p as any).cardDescription.trim() !== '';
+                  const template = hasCustomCard 
+                    ? (p as any).cardDescription 
+                    : `Nombre: {{nombre}}\nDescripción: {{descripcion}}\nPrecio: {{precio}} {{moneda}}`;
+                    
+                  const formattedCard = template
+                    .replace(/{{nombre}}/gi, p.name)
+                    .replace(/{{descripcion}}/gi, p.description || '')
+                    .replace(/{{precio}}/gi, String(p.price))
+                    .replace(/{{moneda}}/gi, p.currency)
+                    .replace(/{{stock}}/gi, String(p.stock));
+
+                  return `- ID: ${p.id} | ${p.name}\n${formattedCard}\nFOTO DEL PRODUCTO ID: ${p.id}`;
                 })
                 .join('\n\n---\n\n') ||
               'No encontré productos con esos criterios.';

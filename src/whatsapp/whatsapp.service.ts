@@ -414,10 +414,9 @@ export class WhatsappService {
       orgId,
     );
 
-    // 1. Enviar las imágenes detectadas por la IA
-    const apiUrl = process.env.API_URL || 'http://localhost:3000';
-
-    for (let url of imageUrls) {
+    // 1. Si hay exactamente 1 imagen y el texto entra en el límite de caption de WhatsApp (1024 chars), lo mandamos como un Card unificado.
+    if (imageUrls.length === 1 && text.length <= 1000) {
+      let url = imageUrls[0];
       const baseUrl = process.env.API_URL || 'http://localhost:3000';
       if (url.includes('localhost:3000')) {
         url = url.replace(
@@ -427,16 +426,38 @@ export class WhatsappService {
       }
 
       try {
-        await this.sendMessage(contactId, '', 'image', url);
+        await this.sendMessage(contactId, text, 'image', url);
+        return; // Listo, enviamos la imagen y el texto en una sola burbuja
       } catch (imgError: unknown) {
         this.logger.error(
-          `❌ Fallo al enviar imagen a WhatsApp: ${imgError instanceof Error ? imgError.message : String(imgError)}`,
+          `❌ Fallo al enviar card unificado a WhatsApp: ${imgError instanceof Error ? imgError.message : String(imgError)}`,
         );
       }
-    }
+    } else {
+      // 2. Comportamiento original (múltiples imágenes o texto muy largo)
+      for (let url of imageUrls) {
+        const baseUrl = process.env.API_URL || 'http://localhost:3000';
+        if (url.includes('localhost:3000')) {
+          url = url.replace(
+            'localhost:3000',
+            baseUrl.replace('http://', '').replace('https://', ''),
+          );
+        }
 
-    // 2. Enviar el mensaje de texto final
-    await this.sendMessage(contactId, text);
+        try {
+          await this.sendMessage(contactId, '', 'image', url);
+        } catch (imgError: unknown) {
+          this.logger.error(
+            `❌ Fallo al enviar imagen a WhatsApp: ${imgError instanceof Error ? imgError.message : String(imgError)}`,
+          );
+        }
+      }
+
+      // Enviar el mensaje de texto final
+      if (text) {
+        await this.sendMessage(contactId, text);
+      }
+    }
   }
 
   private async autoReplyWithLocation(
