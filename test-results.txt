@@ -1,0 +1,233 @@
+PASS src/app.controller.spec.ts
+  AppController
+    root
+      √ should return "Hello World!" (23 ms)
+
+  console.log
+    ◇ injected env (14) from .env // tip: ⌘ enable debugging { debug: true }
+
+      at _log (../node_modules/dotenv/lib/main.js:131:11)
+
+  console.log
+    ◇ injected env (14) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+
+      at _log (../node_modules/dotenv/lib/main.js:131:11)
+
+  console.log
+    ◇ injected env (14) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+
+      at _log (../node_modules/dotenv/lib/main.js:131:11)
+
+  console.log
+    ◇ injected env (14) from .env // tip: ⌘ override existing { override: true }
+
+      at _log (../node_modules/dotenv/lib/main.js:131:11)
+
+PASS src/prisma/prisma.service.spec.ts
+  PrismaService
+    √ should be defined (53 ms)
+
+  console.log
+    ◇ injected env (14) from .env // tip: ⌘ suppress logs { quiet: true }
+
+      at _log (../node_modules/dotenv/lib/main.js:131:11)
+
+PASS src/keyword/keyword.service.spec.ts
+  KeywordService
+    √ should be defined (41 ms)
+    √ should create a keyword trigger (8 ms)
+    √ should return all keyword triggers for an org (8 ms)
+
+  console.log
+    ◇ injected env (14) from .env // tip: ⌘ suppress logs { quiet: true }
+
+      at _log (../node_modules/dotenv/lib/main.js:131:11)
+
+FAIL src/config/config.service.spec.ts
+  ConfigService
+    × should be defined (27 ms)
+    getAdminDeliveryContacts
+      × should return a list of contacts for the given organization (3 ms)
+    updateAdminDeliveryContacts
+      × should replace contacts and return the new list (3 ms)
+
+  ● ConfigService › should be defined
+
+    Nest can't resolve dependencies of the ConfigService (?). Please make sure that the argument OperationContactsService at index [0] is available in the RootTestModule module.
+
+    Potential solutions:
+    - Is RootTestModule a valid NestJS module?
+    - If OperationContactsService is a provider, is it part of the current RootTestModule?
+    - If OperationContactsService is exported from a separate @Module, is that module imported within RootTestModule?
+      @Module({
+        imports: [ /* the Module containing OperationContactsService */ ]
+      })
+
+    For more common dependency resolution issues, see: https://docs.nestjs.com/faq/common-errors
+
+    [0m [90m  9 |[39m
+     [90m 10 |[39m   beforeEach([36masync[39m () [33m=>[39m {
+    [31m[1m>[22m[39m[90m 11 |[39m     [36mconst[39m module[33m:[39m [33mTestingModule[39m [33m=[39m [36mawait[39m [33mTest[39m[33m.[39mcreateTestingModule({
+     [90m    |[39m                                   [31m[1m^[22m[39m
+     [90m 12 |[39m       providers[33m:[39m [
+     [90m 13 |[39m         [33mConfigService[39m[33m,[39m
+     [90m 14 |[39m         {[0m
+
+      at TestingInjector.lookupComponentInParentModules (../node_modules/@nestjs/core/injector/injector.js:290:19)
+      at TestingInjector.resolveComponentWrapper (../node_modules/@nestjs/testing/testing-injector.js:19:45)
+      at resolveParam (../node_modules/@nestjs/core/injector/injector.js:140:38)
+          at async Promise.all (index 0)
+      at TestingInjector.resolveConstructorParams (../node_modules/@nestjs/core/injector/injector.js:169:27)
+      at TestingInjector.loadInstance (../node_modules/@nestjs/core/injector/injector.js:75:13)
+      at TestingInjector.loadProvider (../node_modules/@nestjs/core/injector/injector.js:103:9)
+      at ../node_modules/@nestjs/core/injector/instance-loader.js:56:13
+          at async Promise.all (index 3)
+      at TestingInstanceLoader.createInstancesOfProviders (../node_modules/@nestjs/core/injector/instance-loader.js:55:9)
+      at ../node_modules/@nestjs/core/injector/instance-loader.js:40:13
+          at async Promise.all (index 1)
+      at TestingInstanceLoader.createInstances (../node_modules/@nestjs/core/injector/instance-loader.js:39:9)
+      at TestingInstanceLoader.createInstancesOfDependencies (../node_modules/@nestjs/core/injector/instance-loader.js:22:13)
+      at TestingInstanceLoader.createInstancesOfDependencies (../node_modules/@nestjs/testing/testing-instance-loader.js:9:9)
+      at TestingModuleBuilder.createInstancesOfDependencies (../node_modules/@nestjs/testing/testing-module.builder.js:118:9)
+      at TestingModuleBuilder.compile (../node_modules/@nestjs/testing/testing-module.builder.js:74:9)
+      at Object.<anonymous> (config/config.service.spec.ts:11:35)
+
+  ● ConfigService › getAdminDeliveryContacts › should return a list of contacts for the given organization
+
+    Nest can't resolve dependencies of the ConfigService (?). Please make sure that the argument OperationContactsService at index [0] is available in the RootTestModule module.
+
+    Potential solutions:
+    - Is RootTestModule a valid NestJS module?
+    - If OperationContactsService is a provider, is it part of the current RootTestModule?
+    - If OperationContactsService is exported from a separate @Module, is that module imported within RootTestModule?
+      @Module({
+        imports: [ /* the Module containing OperationContactsService */ ]
+      })
+
+    For more common dependency resolution issues, see: https://docs.nestjs.com/faq/common-errors
+
+    [0m [90m  9 |[39m
+     [90m 10 |[39m   beforeEach([36masync[39m () [33m=>[39m {
+    [31m[1m>[22m[39m[90m 11 |[39m     [36mconst[39m module[33m:[39m [33mTestingModule[39m [33m=[39m [36mawait[39m [33mTest[39m[33m.[39mcreateTestingModule({
+     [90m    |[39m                                   [31m[1m^[22m[39m
+     [90m 12 |[39m       providers[33m:[39m [
+     [90m 13 |[39m         [33mConfigService[39m[33m,[39m
+     [90m 14 |[39m         {[0m
+
+      at TestingInjector.lookupComponentInParentModules (../node_modules/@nestjs/core/injector/injector.js:290:19)
+      at TestingInjector.resolveComponentWrapper (../node_modules/@nestjs/testing/testing-injector.js:19:45)
+      at resolveParam (../node_modules/@nestjs/core/injector/injector.js:140:38)
+          at async Promise.all (index 0)
+      at TestingInjector.resolveConstructorParams (../node_modules/@nestjs/core/injector/injector.js:169:27)
+      at TestingInjector.loadInstance (../node_modules/@nestjs/core/injector/injector.js:75:13)
+      at TestingInjector.loadProvider (../node_modules/@nestjs/core/injector/injector.js:103:9)
+      at ../node_modules/@nestjs/core/injector/instance-loader.js:56:13
+          at async Promise.all (index 3)
+      at TestingInstanceLoader.createInstancesOfProviders (../node_modules/@nestjs/core/injector/instance-loader.js:55:9)
+      at ../node_modules/@nestjs/core/injector/instance-loader.js:40:13
+          at async Promise.all (index 1)
+      at TestingInstanceLoader.createInstances (../node_modules/@nestjs/core/injector/instance-loader.js:39:9)
+      at TestingInstanceLoader.createInstancesOfDependencies (../node_modules/@nestjs/core/injector/instance-loader.js:22:13)
+      at TestingInstanceLoader.createInstancesOfDependencies (../node_modules/@nestjs/testing/testing-instance-loader.js:9:9)
+      at TestingModuleBuilder.createInstancesOfDependencies (../node_modules/@nestjs/testing/testing-module.builder.js:118:9)
+      at TestingModuleBuilder.compile (../node_modules/@nestjs/testing/testing-module.builder.js:74:9)
+      at Object.<anonymous> (config/config.service.spec.ts:11:35)
+
+  ● ConfigService › updateAdminDeliveryContacts › should replace contacts and return the new list
+
+    Nest can't resolve dependencies of the ConfigService (?). Please make sure that the argument OperationContactsService at index [0] is available in the RootTestModule module.
+
+    Potential solutions:
+    - Is RootTestModule a valid NestJS module?
+    - If OperationContactsService is a provider, is it part of the current RootTestModule?
+    - If OperationContactsService is exported from a separate @Module, is that module imported within RootTestModule?
+      @Module({
+        imports: [ /* the Module containing OperationContactsService */ ]
+      })
+
+    For more common dependency resolution issues, see: https://docs.nestjs.com/faq/common-errors
+
+    [0m [90m  9 |[39m
+     [90m 10 |[39m   beforeEach([36masync[39m () [33m=>[39m {
+    [31m[1m>[22m[39m[90m 11 |[39m     [36mconst[39m module[33m:[39m [33mTestingModule[39m [33m=[39m [36mawait[39m [33mTest[39m[33m.[39mcreateTestingModule({
+     [90m    |[39m                                   [31m[1m^[22m[39m
+     [90m 12 |[39m       providers[33m:[39m [
+     [90m 13 |[39m         [33mConfigService[39m[33m,[39m
+     [90m 14 |[39m         {[0m
+
+      at TestingInjector.lookupComponentInParentModules (../node_modules/@nestjs/core/injector/injector.js:290:19)
+      at TestingInjector.resolveComponentWrapper (../node_modules/@nestjs/testing/testing-injector.js:19:45)
+      at resolveParam (../node_modules/@nestjs/core/injector/injector.js:140:38)
+          at async Promise.all (index 0)
+      at TestingInjector.resolveConstructorParams (../node_modules/@nestjs/core/injector/injector.js:169:27)
+      at TestingInjector.loadInstance (../node_modules/@nestjs/core/injector/injector.js:75:13)
+      at TestingInjector.loadProvider (../node_modules/@nestjs/core/injector/injector.js:103:9)
+      at ../node_modules/@nestjs/core/injector/instance-loader.js:56:13
+          at async Promise.all (index 3)
+      at TestingInstanceLoader.createInstancesOfProviders (../node_modules/@nestjs/core/injector/instance-loader.js:55:9)
+      at ../node_modules/@nestjs/core/injector/instance-loader.js:40:13
+          at async Promise.all (index 1)
+      at TestingInstanceLoader.createInstances (../node_modules/@nestjs/core/injector/instance-loader.js:39:9)
+      at TestingInstanceLoader.createInstancesOfDependencies (../node_modules/@nestjs/core/injector/instance-loader.js:22:13)
+      at TestingInstanceLoader.createInstancesOfDependencies (../node_modules/@nestjs/testing/testing-instance-loader.js:9:9)
+      at TestingModuleBuilder.createInstancesOfDependencies (../node_modules/@nestjs/testing/testing-module.builder.js:118:9)
+      at TestingModuleBuilder.compile (../node_modules/@nestjs/testing/testing-module.builder.js:74:9)
+      at Object.<anonymous> (config/config.service.spec.ts:11:35)
+
+  console.log
+    ◇ injected env (14) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+
+      at _log (../node_modules/dotenv/lib/main.js:131:11)
+
+PASS src/config/config.controller.spec.ts
+  ConfigController
+    √ should be defined (17 ms)
+
+  console.log
+    ◇ injected env (14) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+
+      at _log (../node_modules/dotenv/lib/main.js:131:11)
+
+PASS src/whatsapp/whatsapp.service.spec.ts
+  WhatsappService
+    √ should be defined (16 ms)
+
+PASS src/whatsapp/whatsapp.controller.spec.ts
+  WhatsappController
+    √ should be defined (22 ms)
+
+PASS src/keyword/keyword.controller.spec.ts
+  KeywordController
+    √ should be defined (29 ms)
+
+  console.error
+    Error al notificar a los administradores: TypeError: Cannot read properties of undefined (reading 'findMany')
+        at OrdersService.notifyAdminsNewOrder (D:\omnicore\APIOmniCore\src\orders\orders.service.ts:167:57)
+        at OrdersService.updateStatus (D:\omnicore\APIOmniCore\src\orders\orders.service.ts:149:20)
+        at processTicksAndRejections (node:internal/process/task_queues:103:5)
+        at Object.<anonymous> (D:\omnicore\APIOmniCore\src\orders\orders.service.spec.ts:58:22)
+
+    [0m [90m 195 |[39m       }
+     [90m 196 |[39m     } [36mcatch[39m (err) {
+    [31m[1m>[22m[39m[90m 197 |[39m       console[33m.[39merror([32m'Error al notificar a los administradores:'[39m[33m,[39m err)[33m;[39m
+     [90m     |[39m               [31m[1m^[22m[39m
+     [90m 198 |[39m     }
+     [90m 199 |[39m   }
+     [90m 200 |[39m[0m
+
+      at OrdersService.notifyAdminsNewOrder (orders/orders.service.ts:197:15)
+      at OrdersService.updateStatus (orders/orders.service.ts:149:20)
+      at Object.<anonymous> (orders/orders.service.spec.ts:58:22)
+
+PASS src/orders/orders.service.spec.ts
+  OrdersService
+    √ should be defined (14 ms)
+    updateStatus
+      √ should throw BadRequestException if transition is invalid (12 ms)
+      √ should allow valid transition (8 ms)
+
+Test Suites: 1 failed, 8 passed, 9 total
+Tests:       3 failed, 12 passed, 15 total
+Snapshots:   0 total
+Time:        2.697 s
+Ran all test suites.
