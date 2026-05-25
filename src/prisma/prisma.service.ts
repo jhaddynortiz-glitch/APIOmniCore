@@ -23,8 +23,8 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
     try {
       await this.$connect();
       Logger.log('Base de datos conectada correctamente (Prisma 7.7 con pg-adapter)', PrismaService.name);
-    } catch (e) {
-      Logger.error('Error conectando a la BD', e.stack, PrismaService.name);
+    } catch (e: unknown) {
+      Logger.error('Error conectando a la BD', e instanceof Error ? e.stack : String(e), PrismaService.name);
     }
   }
 

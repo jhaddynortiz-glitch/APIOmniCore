@@ -192,8 +192,8 @@ export class WhatsappService {
 
           // Auto-reply for images too? Maybe just skip for now to avoid loops
           return createdMessage;
-        } catch (err) {
-          this.logger.error('Error procesando imagen de WhatsApp', err.message);
+        } catch (err: unknown) {
+          this.logger.error('Error procesando imagen de WhatsApp', err instanceof Error ? err.message : String(err));
         }
       } else if (savedBody) {
         // Verificar Disparadores / Respuestas de Servidor primero
@@ -243,8 +243,8 @@ export class WhatsappService {
         const dateB = b.messages[0]?.createdAt ? new Date(b.messages[0].createdAt).getTime() : new Date(b.createdAt).getTime();
         return dateB - dateA;
       });
-    } catch (error) {
-      this.logger.error('Error obteniendo contactos', error.stack);
+    } catch (error: unknown) {
+      this.logger.error('Error obteniendo contactos', error instanceof Error ? error.stack : String(error));
       throw error;
     }
   }
@@ -323,8 +323,8 @@ export class WhatsappService {
 
       this.chatGateway.emitNewMessage(createdMessage);
       return createdMessage;
-    } catch (error) {
-      this.logger.error(`Error enviando mensaje a contacto ${contactId}`, error.stack);
+    } catch (error: unknown) {
+      this.logger.error(`Error enviando mensaje a contacto ${contactId}`, error instanceof Error ? error.stack : String(error));
       throw error;
     }
   }
@@ -362,8 +362,8 @@ export class WhatsappService {
 
       try {
         await this.sendMessage(contactId, '', 'image', url);
-      } catch (imgError) {
-        this.logger.error(`❌ Fallo al enviar imagen a WhatsApp: ${imgError.message}`);
+      } catch (imgError: unknown) {
+        this.logger.error(`❌ Fallo al enviar imagen a WhatsApp: ${imgError instanceof Error ? imgError.message : String(imgError)}`);
       }
     }
 
@@ -447,8 +447,8 @@ export class WhatsappService {
       });
       this.logger.log(`👁️ Chat marcado como leído: ${contactId}`);
       return { success: true };
-    } catch (error) {
-      this.logger.error(`Error marcando como leído a ${contactId}`, error.stack);
+    } catch (error: unknown) {
+      this.logger.error(`Error marcando como leído a ${contactId}`, error instanceof Error ? error.stack : String(error));
       throw error;
     }
   }
@@ -489,8 +489,8 @@ export class WhatsappService {
 
       this.chatGateway.emitContactUpdated(contact);
       return contact;
-    } catch (error) {
-      this.logger.error('Error creando contacto manualmente', error.stack);
+    } catch (error: unknown) {
+      this.logger.error('Error creando contacto manualmente', error instanceof Error ? error.stack : String(error));
       throw error;
     }
   }

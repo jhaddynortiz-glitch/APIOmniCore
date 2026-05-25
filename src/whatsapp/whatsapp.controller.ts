@@ -40,7 +40,7 @@ export class WhatsappController {
       await this.whatsappService.processWebhook(body);
       return { status: 'success', message: 'Webhook procesado correctamente' };
     } catch (error) {
-      this.logger.error('❌ Error procesando webhook:', error.message);
+      this.logger.error('❌ Error procesando webhook:', (error as any).message);
       throw new HttpException('Error interno procesando webhook', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -85,9 +85,9 @@ export class WhatsappController {
     try {
       return await this.whatsappService.sendMessage(contactId, text, type, mediaUrl);
     } catch (error) {
-      this.logger.error(`Error enviando mensaje por WhatsApp a contacto ${contactId}: ${error.message}`);
+      this.logger.error(`Error enviando mensaje por WhatsApp a contacto ${contactId}: ${(error as any).message}`);
       throw new HttpException(
-        error.message || 'Error al enviar el mensaje por WhatsApp',
+        (error as any).message || 'Error al enviar el mensaje por WhatsApp',
         HttpStatus.BAD_REQUEST
       );
     }
