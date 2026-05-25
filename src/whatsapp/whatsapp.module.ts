@@ -8,5 +8,6 @@ import { GptModule } from '../gpt/gpt.module';
   imports: [PrismaModule, GptModule],
   controllers: [WhatsappController],
   providers: [WhatsappService],
+  exports: [WhatsappService],
 })
 export class WhatsappModule {}
