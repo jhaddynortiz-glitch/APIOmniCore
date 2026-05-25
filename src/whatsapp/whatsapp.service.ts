@@ -124,7 +124,7 @@ export class WhatsappService {
           matchedProduct = await this.prisma.product.findFirst({
             where: {
               organizationId: org.id,
-              ads: { some: { adId: { contains: testId } } },
+              ads: { some: { adId: { equals: testId } } },
             },
           });
           if (matchedProduct) {
