@@ -26,6 +26,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
       - name: Run Backend Unit Tests and Coverage (80% Target)
         run: npm run test:cov
 
