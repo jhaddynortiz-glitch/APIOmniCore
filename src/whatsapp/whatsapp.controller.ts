@@ -11,6 +11,7 @@ import {
   UseGuards,
   Request,
   HttpCode,
+  Delete,
 } from '@nestjs/common';
 import { WhatsappService } from './whatsapp.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
