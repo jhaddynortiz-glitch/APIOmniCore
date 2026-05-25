@@ -33,7 +33,11 @@ export class KeywordService {
     return keyword;
   }
 
-  async update(id: string, updateKeywordDto: UpdateKeywordDto, organizationId: string) {
+  async update(
+    id: string,
+    updateKeywordDto: UpdateKeywordDto,
+    organizationId: string,
+  ) {
     await this.findOne(id, organizationId); // ensures it exists and belongs to org
     return this.prisma.keywordTrigger.update({
       where: { id },

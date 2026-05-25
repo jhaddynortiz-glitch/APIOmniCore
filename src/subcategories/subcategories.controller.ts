@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Request,
+  Query,
+} from '@nestjs/common';
 import { SubcategoriesService } from './subcategories.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
@@ -10,7 +21,10 @@ export class SubcategoriesController {
   @Get()
   findAll(@Request() req: any, @Query('categoryId') categoryId?: string) {
     if (categoryId) {
-      return this.subcategoriesService.findByCategoryId(categoryId, req.user.orgId);
+      return this.subcategoriesService.findByCategoryId(
+        categoryId,
+        req.user.orgId,
+      );
     }
     return this.subcategoriesService.findAll(req.user.orgId);
   }

@@ -28,7 +28,12 @@ export class LogisticsService {
 
   async createDeliveryZone(
     organizationId: string,
-    data: { city: string; lat: number; lng: number; radii: { distanceKm: number; price: number }[] }
+    data: {
+      city: string;
+      lat: number;
+      lng: number;
+      radii: { distanceKm: number; price: number }[];
+    },
   ) {
     return this.prisma.deliveryZone.create({
       data: {
@@ -50,7 +55,12 @@ export class LogisticsService {
   async updateDeliveryZone(
     id: string,
     organizationId: string,
-    data: { city: string; lat: number; lng: number; radii: { distanceKm: number; price: number }[] }
+    data: {
+      city: string;
+      lat: number;
+      lng: number;
+      radii: { distanceKm: number; price: number }[];
+    },
   ) {
     await this.findOneDeliveryZone(id, organizationId);
 
@@ -107,7 +117,14 @@ export class LogisticsService {
 
   async createStoreLocation(
     organizationId: string,
-    data: { city: string; address: string; description?: string; lat: number; lng: number; imageUrl?: string }
+    data: {
+      city: string;
+      address: string;
+      description?: string;
+      lat: number;
+      lng: number;
+      imageUrl?: string;
+    },
   ) {
     return this.prisma.storeLocation.create({
       data: {
@@ -120,7 +137,14 @@ export class LogisticsService {
   async updateStoreLocation(
     id: string,
     organizationId: string,
-    data: { city: string; address: string; description?: string; lat: number; lng: number; imageUrl?: string }
+    data: {
+      city: string;
+      address: string;
+      description?: string;
+      lat: number;
+      lng: number;
+      imageUrl?: string;
+    },
   ) {
     await this.findOneStoreLocation(id, organizationId);
     return this.prisma.storeLocation.update({
@@ -157,7 +181,7 @@ export class LogisticsService {
 
   async createMeetingPoint(
     organizationId: string,
-    data: { city: string; name: string; address?: string; schedule: string }
+    data: { city: string; name: string; address?: string; schedule: string },
   ) {
     return this.prisma.meetingPoint.create({
       data: {
@@ -170,7 +194,7 @@ export class LogisticsService {
   async updateMeetingPoint(
     id: string,
     organizationId: string,
-    data: { city: string; name: string; address?: string; schedule: string }
+    data: { city: string; name: string; address?: string; schedule: string },
   ) {
     await this.findOneMeetingPoint(id, organizationId);
     return this.prisma.meetingPoint.update({

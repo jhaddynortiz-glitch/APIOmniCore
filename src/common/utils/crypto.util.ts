@@ -1,9 +1,9 @@
 import * as crypto from 'crypto';
 
 const ALGORITHM = 'aes-256-cbc';
-const RAW_KEY = process.env.CRYPTO_KEY || 'omnicore_secure_32_byte_key_auth'; 
+const RAW_KEY = process.env.CRYPTO_KEY || 'omnicore_secure_32_byte_key_auth';
 const ENCRYPTION_KEY = crypto.createHash('sha256').update(RAW_KEY).digest();
-const IV_LENGTH = 16; 
+const IV_LENGTH = 16;
 
 export function encrypt(text: string): string {
   if (!text) return text;

@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { WhatsappService } from '../whatsapp/whatsapp.service';
 
@@ -60,7 +64,7 @@ export class OrdersService {
       meetingPointId?: string;
       total: number;
       items: { productId: string; quantity: number; price: number }[];
-    }
+    },
   ) {
     const { items, ...orderData } = data;
 
@@ -92,15 +96,18 @@ export class OrdersService {
 
     // Keyword matching
     const keywords = await this.prisma.keywordTrigger.findMany({
-      where: { organizationId }
+      where: { organizationId },
     });
-    
-    const productNames = order.items.map(i => i.Product?.name || '').join(' ');
-    const orderText = `${order.shippingAddress || ''} ${productNames}`.toLowerCase();
-    
+
+    const productNames = order.items
+      .map((i) => i.Product?.name || '')
+      .join(' ');
+    const orderText =
+      `${order.shippingAddress || ''} ${productNames}`.toLowerCase();
+
     const matchedResponses = keywords
-      .filter(k => orderText.includes(k.keyword.toLowerCase()))
-      .map(k => k.response);
+      .filter((k) => orderText.includes(k.keyword.toLowerCase()))
+      .map((k) => k.response);
 
     return {
       ...order,
@@ -108,29 +115,41 @@ export class OrdersService {
     };
   }
 
-  async updateStatus(id: string, organizationId: string, status: string, deliveryContactId?: string) {
+  async updateStatus(
+    id: string,
+    organizationId: string,
+    status: string,
+    deliveryContactId?: string,
+  ) {
     const order = await this.findOne(id, organizationId);
     const oldStatus = order.status;
 
     const validTransitions: Record<string, string[]> = {
-      'PENDING': ['EN_COLA', 'CONFIRMED', 'CANCELLED'],
-      'EN_COLA': ['ASIGNADO', 'CANCELLED'],
-      'ASIGNADO': ['EN_CAMINO', 'CANCELLED'],
-      'EN_CAMINO': ['ENTREGADO', 'CANCELLED'],
-      'CONFIRMED': ['ENTREGADO', 'CANCELLED'],
-      'ENTREGADO': [],
-      'CANCELLED': []
+      PENDING: ['EN_COLA', 'CONFIRMED', 'CANCELLED'],
+      EN_COLA: ['ASIGNADO', 'CANCELLED'],
+      ASIGNADO: ['EN_CAMINO', 'CANCELLED'],
+      EN_CAMINO: ['ENTREGADO', 'CANCELLED'],
+      CONFIRMED: ['ENTREGADO', 'CANCELLED'],
+      ENTREGADO: [],
+      CANCELLED: [],
     };
 
     if (!validTransitions[oldStatus]?.includes(status)) {
-      throw new BadRequestException(`Transición de estado inválida de ${oldStatus} a ${status}`);
+      throw new BadRequestException(
+        `Transición de estado inválida de ${oldStatus} a ${status}`,
+      );
     }
 
     const updatedOrder = await this.prisma.order.update({
       where: { id },
-      data: { 
+      data: {
         status,
-        deliveryContactId: status === 'ASIGNADO' ? (deliveryContactId || null) : (status === 'PENDING' || status === 'EN_COLA' ? null : undefined)
+        deliveryContactId:
+          status === 'ASIGNADO'
+            ? deliveryContactId || null
+            : status === 'PENDING' || status === 'EN_COLA'
+              ? null
+              : undefined,
       },
       include: {
         Contact: true,
@@ -165,7 +184,7 @@ export class OrdersService {
   private async notifyAdminsNewOrder(organizationId: string, order: any) {
     try {
       const admins = await this.prisma.operationContact.findMany({
-        where: { organizationId, type: 'ADMIN' }
+        where: { organizationId, type: 'ADMIN' },
       });
 
       if (admins.length === 0) return;
@@ -173,24 +192,53 @@ export class OrdersService {
       const clientName = order.Contact?.name || 'Cliente';
       const clientPhone = order.Contact?.phoneNumber || '';
       const total = order.total;
-      const productsText = order.items.map((item: any) => 
-        "- " + item.quantity + "x " + (item.Product?.name || 'Producto') + " (" + item.price + " Bs)"
-      ).join('\n');
-      
-      const address = order.shippingAddress || 'No especificada';
-      const mapsLink = (order.lat && order.lng) 
-        ? "\\n🌍 *Ubicación GPS:* https://maps.google.com/?q=" + order.lat + "," + order.lng 
-        : '';
+      const productsText = order.items
+        .map(
+          (item: any) =>
+            '- ' +
+            item.quantity +
+            'x ' +
+            (item.Product?.name || 'Producto') +
+            ' (' +
+            item.price +
+            ' Bs)',
+        )
+        .join('\n');
 
-      const messageText = "🔔 *Nuevo Pedido Confirmado (En Cola)*\n\n" +
-                          "👤 *Cliente:* " + clientName + " (" + clientPhone + ")\n" +
-                          "💵 *Total:* " + total + " Bs\n" +
-                          "📍 *Dirección:* " + address + mapsLink + "\n\n" +
-                          "📦 *Productos:* \n" + productsText + "\n\n" +
-                          "⚠️ Ingresa a la plataforma para asignar este pedido a un repartidor.";
+      const address = order.shippingAddress || 'No especificada';
+      const mapsLink =
+        order.lat && order.lng
+          ? '\\n🌍 *Ubicación GPS:* https://maps.google.com/?q=' +
+            order.lat +
+            ',' +
+            order.lng
+          : '';
+
+      const messageText =
+        '🔔 *Nuevo Pedido Confirmado (En Cola)*\n\n' +
+        '👤 *Cliente:* ' +
+        clientName +
+        ' (' +
+        clientPhone +
+        ')\n' +
+        '💵 *Total:* ' +
+        total +
+        ' Bs\n' +
+        '📍 *Dirección:* ' +
+        address +
+        mapsLink +
+        '\n\n' +
+        '📦 *Productos:* \n' +
+        productsText +
+        '\n\n' +
+        '⚠️ Ingresa a la plataforma para asignar este pedido a un repartidor.';
 
       for (const admin of admins) {
-        const adminContact = await this.whatsappService.createContact(admin.name, admin.phoneNumber, organizationId);
+        const adminContact = await this.whatsappService.createContact(
+          admin.name,
+          admin.phoneNumber,
+          organizationId,
+        );
         await this.whatsappService.sendMessage(adminContact.id, messageText);
       }
     } catch (err) {
@@ -201,7 +249,7 @@ export class OrdersService {
   private async notifyDeliveryAssigned(organizationId: string, order: any) {
     try {
       const driver = await this.prisma.operationContact.findUnique({
-        where: { id: order.deliveryContactId }
+        where: { id: order.deliveryContactId },
       });
 
       if (!driver) return;
@@ -209,23 +257,52 @@ export class OrdersService {
       const clientName = order.Contact?.name || 'Cliente';
       const clientPhone = order.Contact?.phoneNumber || '';
       const total = order.total;
-      const productsText = order.items.map((item: any) => 
-        "- " + item.quantity + "x " + (item.Product?.name || 'Producto') + " (" + item.price + " Bs)"
-      ).join('\n');
-      
+      const productsText = order.items
+        .map(
+          (item: any) =>
+            '- ' +
+            item.quantity +
+            'x ' +
+            (item.Product?.name || 'Producto') +
+            ' (' +
+            item.price +
+            ' Bs)',
+        )
+        .join('\n');
+
       const address = order.shippingAddress || 'No especificada';
-      const mapsLink = (order.lat && order.lng) 
-        ? "\\n🌍 *Ubicación GPS:* https://maps.google.com/?q=" + order.lat + "," + order.lng 
-        : '';
+      const mapsLink =
+        order.lat && order.lng
+          ? '\\n🌍 *Ubicación GPS:* https://maps.google.com/?q=' +
+            order.lat +
+            ',' +
+            order.lng
+          : '';
 
-      const messageText = "🛵 *Pedido Asignado para Entrega*\n\n" +
-                          "👤 *Cliente:* " + clientName + " (" + clientPhone + ")\n" +
-                          "📍 *Dirección de Entrega:* " + address + mapsLink + "\n\n" +
-                          "📦 *Productos:* \n" + productsText + "\n" +
-                          "💵 *Monto a Cobrar:* " + total + " Bs\n\n" +
-                          "⚠️ Por favor, reporta cuando el pedido haya sido entregado.";
+      const messageText =
+        '🛵 *Pedido Asignado para Entrega*\n\n' +
+        '👤 *Cliente:* ' +
+        clientName +
+        ' (' +
+        clientPhone +
+        ')\n' +
+        '📍 *Dirección de Entrega:* ' +
+        address +
+        mapsLink +
+        '\n\n' +
+        '📦 *Productos:* \n' +
+        productsText +
+        '\n' +
+        '💵 *Monto a Cobrar:* ' +
+        total +
+        ' Bs\n\n' +
+        '⚠️ Por favor, reporta cuando el pedido haya sido entregado.';
 
-      const driverContact = await this.whatsappService.createContact(driver.name, driver.phoneNumber, organizationId);
+      const driverContact = await this.whatsappService.createContact(
+        driver.name,
+        driver.phoneNumber,
+        organizationId,
+      );
       await this.whatsappService.sendMessage(driverContact.id, messageText);
     } catch (err) {
       console.error('Error al notificar al repartidor:', err);

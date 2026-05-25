@@ -1,4 +1,13 @@
-import { Controller, Post, Body, UseGuards, Request, Get, HttpCode, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UseGuards,
+  Request,
+  Get,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './jwt-auth.guard';
 
@@ -29,7 +38,10 @@ export class AuthController {
   @Post('login')
   @HttpCode(HttpStatus.OK)
   async login(@Body() loginDto: any) {
-    const user = await this.authService.validateUser(loginDto.email, loginDto.password);
+    const user = await this.authService.validateUser(
+      loginDto.email,
+      loginDto.password,
+    );
     if (!user) {
       return { status: 'error', message: 'Credenciales inválidas' };
     }
@@ -39,8 +51,10 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Post('switch-organization')
   @HttpCode(HttpStatus.OK)
-  async switchOrganization(@Request() req: any, @Body('organizationId') organizationId: string) {
+  async switchOrganization(
+    @Request() req: any,
+    @Body('organizationId') organizationId: string,
+  ) {
     return this.authService.switchOrganization(req.user.userId, organizationId);
   }
 }
-

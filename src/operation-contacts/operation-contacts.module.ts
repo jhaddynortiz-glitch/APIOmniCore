@@ -7,6 +7,6 @@ import { PrismaModule } from '../prisma/prisma.module';
   imports: [PrismaModule],
   controllers: [OperationContactsController],
   providers: [OperationContactsService],
-  exports: [OperationContactsService]
+  exports: [OperationContactsService],
 })
 export class OperationContactsModule {}

@@ -2,7 +2,6 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { extname } from 'path';
 
-
 @Injectable()
 export class UploadService {
   private s3Client: S3Client;
@@ -20,9 +19,13 @@ export class UploadService {
     });
   }
 
-  async uploadImage(file: Express.Multer.File): Promise<{ url: string, key: string }> {
+  async uploadImage(
+    file: Express.Multer.File,
+  ): Promise<{ url: string; key: string }> {
     if (!this.bucketName) {
-      throw new InternalServerErrorException('AWS_S3_BUCKET_NAME no configurado');
+      throw new InternalServerErrorException(
+        'AWS_S3_BUCKET_NAME no configurado',
+      );
     }
 
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
@@ -36,7 +39,7 @@ export class UploadService {
           Body: file.buffer,
           ContentType: file.mimetype,
           // ACL: 'public-read', // Quita esto si el bucket no tiene ACL públicos habilitados
-        })
+        }),
       );
 
       // Generar URL pública estándar de S3
@@ -46,7 +49,9 @@ export class UploadService {
       return { url, key };
     } catch (error) {
       console.error('Error subiendo a S3:', error);
-      throw new InternalServerErrorException('Error subiendo la imagen a AWS S3');
+      throw new InternalServerErrorException(
+        'Error subiendo la imagen a AWS S3',
+      );
     }
   }
 }

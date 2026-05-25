@@ -30,13 +30,15 @@ describe('ConfigService', () => {
             remove: jest.fn(),
             create: jest.fn(),
           },
-        }
+        },
       ],
     }).compile();
 
     service = module.get<ConfigService>(ConfigService);
     prismaService = module.get<PrismaService>(PrismaService);
-    operationContactsService = module.get<OperationContactsService>(OperationContactsService);
+    operationContactsService = module.get<OperationContactsService>(
+      OperationContactsService,
+    );
   });
 
   it('should be defined', () => {
@@ -45,8 +47,13 @@ describe('ConfigService', () => {
 
   describe('getAdminDeliveryContacts', () => {
     it('should return a list of contacts for the given organization', async () => {
-      const mockContacts = [{ id: '1', type: 'ADMIN' }, { id: '2', type: 'DELIVERY' }] as OperationContact[];
-      jest.spyOn(operationContactsService, 'findAll').mockResolvedValue(mockContacts);
+      const mockContacts = [
+        { id: '1', type: 'ADMIN' },
+        { id: '2', type: 'DELIVERY' },
+      ] as any;
+      jest
+        .spyOn(operationContactsService, 'findAll')
+        .mockResolvedValue(mockContacts);
 
       const orgId = 'org-123';
       const result = await service.getAdminDeliveryContacts(orgId);
@@ -61,17 +68,33 @@ describe('ConfigService', () => {
       const orgId = 'org-123';
       const contacts = [{ name: 'Juan', phoneNumber: '123', type: 'ADMIN' }];
       const existing = [{ id: 'old-1' }] as any[];
-      
-      jest.spyOn(operationContactsService, 'findAll').mockResolvedValue(existing);
-      jest.spyOn(operationContactsService, 'remove').mockResolvedValue({} as any);
-      
-      const mockResult = { ...contacts[0], id: 'new-id', organizationId: orgId } as any;
-      jest.spyOn(operationContactsService, 'create').mockResolvedValue(mockResult);
+
+      jest
+        .spyOn(operationContactsService, 'findAll')
+        .mockResolvedValue(existing);
+      jest
+        .spyOn(operationContactsService, 'remove')
+        .mockResolvedValue({} as any);
+
+      const mockResult = {
+        ...contacts[0],
+        id: 'new-id',
+        organizationId: orgId,
+      } as any;
+      jest
+        .spyOn(operationContactsService, 'create')
+        .mockResolvedValue(mockResult);
 
       const result = await service.updateAdminDeliveryContacts(orgId, contacts);
 
-      expect(operationContactsService.remove).toHaveBeenCalledWith('old-1', orgId);
-      expect(operationContactsService.create).toHaveBeenCalledWith(orgId, contacts[0]);
+      expect(operationContactsService.remove).toHaveBeenCalledWith(
+        'old-1',
+        orgId,
+      );
+      expect(operationContactsService.create).toHaveBeenCalledWith(
+        orgId,
+        contacts[0],
+      );
       expect(result).toEqual([mockResult]);
     });
   });

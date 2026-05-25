@@ -24,10 +24,10 @@ import { KeywordModule } from './keyword/keyword.module';
 
 @Module({
   imports: [
-    WhatsappModule, 
-    PrismaModule, 
-    WebsocketsModule, 
-    AuthModule, 
+    WhatsappModule,
+    PrismaModule,
+    WebsocketsModule,
+    AuthModule,
     UsersModule,
     ProductsModule,
     PromptsModule,

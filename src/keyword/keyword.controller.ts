@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { KeywordService } from './keyword.service';
 import { CreateKeywordDto } from './dto/create-keyword.dto';
 import { UpdateKeywordDto } from './dto/update-keyword.dto';
@@ -25,7 +35,11 @@ export class KeywordController {
   }
 
   @Patch(':id')
-  update(@Request() req: any, @Param('id') id: string, @Body() updateKeywordDto: UpdateKeywordDto) {
+  update(
+    @Request() req: any,
+    @Param('id') id: string,
+    @Body() updateKeywordDto: UpdateKeywordDto,
+  ) {
     return this.keywordService.update(id, updateKeywordDto, req.user.orgId);
   }
 

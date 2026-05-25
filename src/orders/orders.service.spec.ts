@@ -44,19 +44,35 @@ describe('OrdersService', () => {
 
   describe('updateStatus', () => {
     it('should throw BadRequestException if transition is invalid', async () => {
-      const mockOrder = { id: 'order-1', status: 'ENTREGADO', organizationId: 'org-1' };
-      jest.spyOn(prismaService.order, 'findFirst').mockResolvedValue(mockOrder as any);
+      const mockOrder = {
+        id: 'order-1',
+        status: 'ENTREGADO',
+        organizationId: 'org-1',
+      };
+      jest
+        .spyOn(prismaService.order, 'findFirst')
+        .mockResolvedValue(mockOrder as any);
 
-      await expect(service.updateStatus('order-1', 'org-1', 'PENDING')).rejects.toThrow(BadRequestException);
+      await expect(
+        service.updateStatus('order-1', 'org-1', 'PENDING'),
+      ).rejects.toThrow(BadRequestException);
     });
 
     it('should allow valid transition', async () => {
-      const mockOrder = { id: 'order-1', status: 'PENDING', organizationId: 'org-1' };
-      jest.spyOn(prismaService.order, 'findFirst').mockResolvedValue(mockOrder as any);
-      jest.spyOn(prismaService.order, 'update').mockResolvedValue({ ...mockOrder, status: 'EN_COLA' } as any);
+      const mockOrder = {
+        id: 'order-1',
+        status: 'PENDING',
+        organizationId: 'org-1',
+      };
+      jest
+        .spyOn(prismaService.order, 'findFirst')
+        .mockResolvedValue(mockOrder as any);
+      jest
+        .spyOn(prismaService.order, 'update')
+        .mockResolvedValue({ ...mockOrder, status: 'EN_COLA' } as any);
 
       const result = await service.updateStatus('order-1', 'org-1', 'EN_COLA');
-      
+
       expect(prismaService.order.update).toHaveBeenCalled();
       expect(result.status).toEqual('EN_COLA');
     });

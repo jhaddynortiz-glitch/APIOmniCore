@@ -13,7 +13,7 @@ describe('WhatsappService', () => {
         WhatsappService,
         { provide: PrismaService, useValue: {} },
         { provide: GptService, useValue: {} },
-        { provide: ChatGateway, useValue: {} }
+        { provide: ChatGateway, useValue: {} },
       ],
     }).compile();
 

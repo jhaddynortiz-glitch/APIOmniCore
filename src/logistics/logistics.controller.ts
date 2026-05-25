@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Patch, Delete, Param, Body, UseGuards, Request } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Delete,
+  Param,
+  Body,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { LogisticsService } from './logistics.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
@@ -27,7 +37,11 @@ export class LogisticsController {
   }
 
   @Patch('delivery-zones/:id')
-  updateDeliveryZone(@Param('id') id: string, @Request() req: any, @Body() data: any) {
+  updateDeliveryZone(
+    @Param('id') id: string,
+    @Request() req: any,
+    @Body() data: any,
+  ) {
     return this.logisticsService.updateDeliveryZone(id, req.user.orgId, data);
   }
 
@@ -56,7 +70,11 @@ export class LogisticsController {
   }
 
   @Patch('store-locations/:id')
-  updateStoreLocation(@Param('id') id: string, @Request() req: any, @Body() data: any) {
+  updateStoreLocation(
+    @Param('id') id: string,
+    @Request() req: any,
+    @Body() data: any,
+  ) {
     return this.logisticsService.updateStoreLocation(id, req.user.orgId, data);
   }
 
@@ -85,7 +103,11 @@ export class LogisticsController {
   }
 
   @Patch('meeting-points/:id')
-  updateMeetingPoint(@Param('id') id: string, @Request() req: any, @Body() data: any) {
+  updateMeetingPoint(
+    @Param('id') id: string,
+    @Request() req: any,
+    @Body() data: any,
+  ) {
     return this.logisticsService.updateMeetingPoint(id, req.user.orgId, data);
   }
 

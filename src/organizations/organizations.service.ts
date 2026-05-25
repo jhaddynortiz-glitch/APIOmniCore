@@ -20,40 +20,47 @@ export class OrganizationsService {
       ...org,
       whatsappToken: org.whatsappToken ? decrypt(org.whatsappToken) : '',
       openaiApiKey: org.openaiApiKey ? decrypt(org.openaiApiKey) : '',
-      googleClientSecret: org.googleClientSecret ? decrypt(org.googleClientSecret) : '',
+      googleClientSecret: org.googleClientSecret
+        ? decrypt(org.googleClientSecret)
+        : '',
     };
   }
 
   async update(id: string, data: any) {
     // Solo permitimos actualizar campos específicos para evitar errores de Prisma con IDs o relaciones
     const allowedFields = [
-      'name', 
-      'whatsappToken', 
-      'whatsappPhoneId', 
-      'whatsappVerifyToken', 
+      'name',
+      'whatsappToken',
+      'whatsappPhoneId',
+      'whatsappVerifyToken',
       'openaiApiKey',
       'googleClientId',
       'googleClientSecret',
       'logoUrl',
       'isDeliveryEnabled',
       'isLocalEnabled',
-      'isMeetingEnabled'
+      'isMeetingEnabled',
     ];
 
     const updateData: any = {};
-    
+
     for (const key of allowedFields) {
       if (data[key] !== undefined) {
         let value = data[key];
-        
+
         // Encriptar si es un campo sensible
-        if (['whatsappToken', 'openaiApiKey', 'googleClientSecret'].includes(key) && value) {
+        if (
+          ['whatsappToken', 'openaiApiKey', 'googleClientSecret'].includes(
+            key,
+          ) &&
+          value
+        ) {
           // Solo encriptar si no parece estar ya encriptado (para evitar doble encriptación)
           if (!value.includes(':')) {
             value = encrypt(value);
           }
         }
-        
+
         updateData[key] = value;
       }
     }

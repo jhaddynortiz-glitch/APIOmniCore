@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">38.46% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>5/13</span>
+                <span class='fraction'>13/13</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/5</span>
+                <span class='fraction'>5/5</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">27.27% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>3/11</span>
+                <span class='fraction'>11/11</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -100,29 +100,29 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { Injectable } from '@nestjs/common';
@@ -131,29 +131,29 @@ import { OperationContact } from '@prisma/client';
 &nbsp;
 @Injectable()
 export class ConfigService {
-<span class="fstat-no" title="function not covered" >  constructor(private readonly <span class="cstat-no" title="statement not covered" >o</span>perationContactsService: O</span>perationContactsService<span class="branch-1 cbranch-no" title="branch not covered" >) {}</span>
+  constructor(private readonly operationContactsService: OperationContactsService<span class="branch-1 cbranch-no" title="branch not covered" >) {}</span>
 &nbsp;
   // Get admin and delivery contacts for the organization
-<span class="fstat-no" title="function not covered" >  async </span>getAdminDeliveryContacts(organizationId: string): Promise&lt;OperationContact[]&gt; {
-<span class="cstat-no" title="statement not covered" >    return this.operationContactsService.findAll(organizationId);</span>
+  async getAdminDeliveryContacts(organizationId: string): Promise&lt;OperationContact[]&gt; {
+    return this.operationContactsService.findAll(organizationId);
   }
 &nbsp;
   // Update contacts (bulk replace) – expects an array of contacts with type ADMIN or DELIVERY
-<span class="fstat-no" title="function not covered" >  async </span>updateAdminDeliveryContacts(
+  async updateAdminDeliveryContacts(
     organizationId: string,
     contacts: Partial&lt;OperationContact&gt;[],
   ): Promise&lt;OperationContact[]&gt; {
     // For simplicity, remove existing contacts of type ADMIN/DOCUMENT and recreate
-    const existing = <span class="cstat-no" title="statement not covered" >await this.operationContactsService.findAll(organizationId);</span>
+    const existing = await this.operationContactsService.findAll(organizationId);
     // Delete existing contacts of those types
-<span class="cstat-no" title="statement not covered" >    await Promise.all(</span>
-      existing.map(<span class="fstat-no" title="function not covered" >(c</span>) =&gt; <span class="cstat-no" title="statement not covered" >this.operationContactsService.remove(c.id, organizationId))</span>,
+    await Promise.all(
+      existing.map((c) =&gt; this.operationContactsService.remove(c.id, organizationId)),
     );
     // Create new contacts
-    const created = <span class="cstat-no" title="statement not covered" >await Promise.all(</span>
-      contacts.map(<span class="fstat-no" title="function not covered" >(c</span>) =&gt; <span class="cstat-no" title="statement not covered" >this.operationContactsService.create(organizationId, c))</span>,
+    const created = await Promise.all(
+      contacts.map((c) =&gt; this.operationContactsService.create(organizationId, c)),
     );
-<span class="cstat-no" title="statement not covered" >    return created;</span>
+    return created;
   }
 }
 &nbsp;</pre></td></tr></table></pre>
@@ -163,7 +163,7 @@ export class ConfigService {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-05-25T00:39:38.045Z
+                at 2026-05-25T00:57:39.144Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
@@ -20,11 +24,16 @@ export class TemplatesService {
     return template;
   }
 
-  async create(organizationId: string, data: { id?: string; name: string; content: string; isActive?: boolean }) {
+  async create(
+    organizationId: string,
+    data: { id?: string; name: string; content: string; isActive?: boolean },
+  ) {
     const { id, ...templateData } = data;
 
     if (templateData.name && /\s/.test(templateData.name)) {
-      throw new BadRequestException('El nombre de la plantilla no puede contener espacios');
+      throw new BadRequestException(
+        'El nombre de la plantilla no puede contener espacios',
+      );
     }
 
     const existing = await this.prisma.template.findFirst({
@@ -32,9 +41,9 @@ export class TemplatesService {
         organizationId,
         name: {
           equals: templateData.name,
-          mode: 'insensitive'
-        }
-      }
+          mode: 'insensitive',
+        },
+      },
     });
 
     if (existing) {
@@ -49,12 +58,18 @@ export class TemplatesService {
     });
   }
 
-  async update(id: string, organizationId: string, data: { name?: string; content?: string; isActive?: boolean }) {
+  async update(
+    id: string,
+    organizationId: string,
+    data: { name?: string; content?: string; isActive?: boolean },
+  ) {
     await this.findOne(id, organizationId);
 
     if (data.name) {
       if (/\s/.test(data.name)) {
-        throw new BadRequestException('El nombre de la plantilla no puede contener espacios');
+        throw new BadRequestException(
+          'El nombre de la plantilla no puede contener espacios',
+        );
       }
 
       const existing = await this.prisma.template.findFirst({
@@ -62,14 +77,16 @@ export class TemplatesService {
           organizationId,
           name: {
             equals: data.name,
-            mode: 'insensitive'
+            mode: 'insensitive',
           },
-          NOT: { id }
-        }
+          NOT: { id },
+        },
       });
 
       if (existing) {
-        throw new BadRequestException('Ya existe una plantilla con este nombre');
+        throw new BadRequestException(
+          'Ya existe una plantilla con este nombre',
+        );
       }
     }
 

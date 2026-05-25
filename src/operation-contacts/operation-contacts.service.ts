@@ -13,9 +13,9 @@ export class OperationContactsService {
           select: {
             id: true,
             email: true,
-            fullName: true
-          }
-        }
+            fullName: true,
+          },
+        },
       },
       orderBy: { createdAt: 'desc' },
     });
@@ -29,12 +29,13 @@ export class OperationContactsService {
           select: {
             id: true,
             email: true,
-            fullName: true
-          }
-        }
-      }
+            fullName: true,
+          },
+        },
+      },
     });
-    if (!contact) throw new NotFoundException('Contacto de operación no encontrado');
+    if (!contact)
+      throw new NotFoundException('Contacto de operación no encontrado');
     return contact;
   }
 
@@ -44,17 +45,17 @@ export class OperationContactsService {
       data: {
         ...createData,
         organizationId,
-        userId: userId || null
+        userId: userId || null,
       },
       include: {
         User: {
           select: {
             id: true,
             email: true,
-            fullName: true
-          }
-        }
-      }
+            fullName: true,
+          },
+        },
+      },
     });
   }
 
@@ -65,24 +66,24 @@ export class OperationContactsService {
       where: { id },
       data: {
         ...updateData,
-        userId: userId === undefined ? undefined : (userId || null)
+        userId: userId === undefined ? undefined : userId || null,
       },
       include: {
         User: {
           select: {
             id: true,
             email: true,
-            fullName: true
-          }
-        }
-      }
+            fullName: true,
+          },
+        },
+      },
     });
   }
 
   async remove(id: string, organizationId: string) {
     await this.findOne(id, organizationId);
     return this.prisma.operationContact.delete({
-      where: { id }
+      where: { id },
     });
   }
 }

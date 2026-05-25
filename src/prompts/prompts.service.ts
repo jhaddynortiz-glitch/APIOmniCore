@@ -28,7 +28,7 @@ export class PromptsService {
         data: { isActive: false },
       });
     }
-    
+
     const { id, ...createData } = data;
 
     return this.prisma.prompt.create({

@@ -5,7 +5,10 @@ import { PrismaService } from '../prisma/prisma.service';
 export class ProductsService {
   constructor(private prisma: PrismaService) {}
 
-  async findAll(organizationId: string, filters?: { categoryId?: string; subcategoryId?: string; search?: string }) {
+  async findAll(
+    organizationId: string,
+    filters?: { categoryId?: string; subcategoryId?: string; search?: string },
+  ) {
     const where: any = { organizationId };
 
     if (filters?.subcategoryId) {
@@ -19,7 +22,13 @@ export class ProductsService {
       where.OR = [
         { name: { contains: filters.search, mode: 'insensitive' } },
         { description: { contains: filters.search, mode: 'insensitive' } },
-        { triggers: { some: { keyword: { contains: filters.search, mode: 'insensitive' } } } }
+        {
+          triggers: {
+            some: {
+              keyword: { contains: filters.search, mode: 'insensitive' },
+            },
+          },
+        },
       ];
     }
 
@@ -29,8 +38,8 @@ export class ProductsService {
         ads: true,
         triggers: true,
         Subcategory: {
-          include: { Category: true }
-        }
+          include: { Category: true },
+        },
       },
       orderBy: { createdAt: 'desc' },
     });
@@ -43,8 +52,8 @@ export class ProductsService {
         ads: true,
         triggers: true,
         Subcategory: {
-          include: { Category: true }
-        }
+          include: { Category: true },
+        },
       },
     });
     if (!product) throw new NotFoundException('Producto no encontrado');
@@ -53,65 +62,75 @@ export class ProductsService {
 
   async create(organizationId: string, data: any) {
     const { id, ads, triggers, ...createData } = data;
-    
+
     return this.prisma.product.create({
       data: {
         ...createData,
         organizationId,
-        ads: ads && ads.length > 0 ? {
-          create: ads.map((ad: any) => ({
-            adId: ad.adId,
-            platform: ad.platform || 'meta'
-          }))
-        } : undefined,
-        triggers: triggers && triggers.length > 0 ? {
-          create: triggers.map((t: any) => ({
-            keyword: t.keyword,
-            response: t.response
-          }))
-        } : undefined
+        ads:
+          ads && ads.length > 0
+            ? {
+                create: ads.map((ad: any) => ({
+                  adId: ad.adId,
+                  platform: ad.platform || 'meta',
+                })),
+              }
+            : undefined,
+        triggers:
+          triggers && triggers.length > 0
+            ? {
+                create: triggers.map((t: any) => ({
+                  keyword: t.keyword,
+                  response: t.response,
+                })),
+              }
+            : undefined,
       },
       include: {
         ads: true,
-        triggers: true
-      }
+        triggers: true,
+      },
     });
   }
 
   async update(id: string, organizationId: string, data: any) {
     await this.findOne(id, organizationId);
-    
+
     const { ads, triggers, ...updateData } = data;
 
     // Si envían ads, borramos los anteriores y creamos los nuevos
-    const adsOperation = ads ? {
-      deleteMany: {},
-      create: ads.map((ad: any) => ({
-        adId: ad.adId,
-        platform: ad.platform || 'meta'
-      }))
-    } : undefined;
+    const adsOperation = ads
+      ? {
+          deleteMany: {},
+          create: ads.map((ad: any) => ({
+            adId: ad.adId,
+            platform: ad.platform || 'meta',
+          })),
+        }
+      : undefined;
 
     // Si envían triggers, borramos los anteriores y creamos los nuevos
-    const triggersOperation = triggers ? {
-      deleteMany: {},
-      create: triggers.map((t: any) => ({
-        keyword: t.keyword,
-        response: t.response
-      }))
-    } : undefined;
+    const triggersOperation = triggers
+      ? {
+          deleteMany: {},
+          create: triggers.map((t: any) => ({
+            keyword: t.keyword,
+            response: t.response,
+          })),
+        }
+      : undefined;
 
     return this.prisma.product.update({
       where: { id },
       data: {
         ...updateData,
         ...(adsOperation ? { ads: adsOperation } : {}),
-        ...(triggersOperation ? { triggers: triggersOperation } : {})
+        ...(triggersOperation ? { triggers: triggersOperation } : {}),
       },
       include: {
         ads: true,
-        triggers: true
-      }
+        triggers: true,
+      },
     });
   }
 
@@ -128,14 +147,14 @@ export class ProductsService {
       where: { organizationId, isActive: true },
       include: {
         Subcategory: {
-          include: { Category: true }
-        }
+          include: { Category: true },
+        },
       },
       orderBy: [
         { Subcategory: { Category: { name: 'asc' } } },
         { Subcategory: { name: 'asc' } },
-        { name: 'asc' }
-      ]
+        { name: 'asc' },
+      ],
     });
   }
 }

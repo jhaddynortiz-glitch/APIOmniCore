@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Request,
+  Query,
+} from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
@@ -9,12 +20,16 @@ export class ProductsController {
 
   @Get()
   findAll(
-    @Request() req: any, 
+    @Request() req: any,
     @Query('categoryId') categoryId?: string,
     @Query('subcategoryId') subcategoryId?: string,
-    @Query('search') search?: string
+    @Query('search') search?: string,
   ) {
-    return this.productsService.findAll(req.user.orgId, { categoryId, subcategoryId, search });
+    return this.productsService.findAll(req.user.orgId, {
+      categoryId,
+      subcategoryId,
+      search,
+    });
   }
 
   @Get(':id')

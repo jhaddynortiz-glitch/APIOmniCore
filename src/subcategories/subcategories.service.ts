@@ -29,7 +29,10 @@ export class SubcategoriesService {
     return sub;
   }
 
-  async create(organizationId: string, data: { name: string; categoryId: string; id?: string }) {
+  async create(
+    organizationId: string,
+    data: { name: string; categoryId: string; id?: string },
+  ) {
     const { id, ...createData } = data;
     return this.prisma.subcategory.create({
       data: {
@@ -39,7 +42,11 @@ export class SubcategoriesService {
     });
   }
 
-  async update(id: string, organizationId: string, data: { name: string; categoryId: string }) {
+  async update(
+    id: string,
+    organizationId: string,
+    data: { name: string; categoryId: string },
+  ) {
     await this.findOne(id, organizationId);
     return this.prisma.subcategory.update({
       where: { id },
