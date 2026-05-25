@@ -94,6 +94,8 @@ REGLAS DE ORO:
           'Query the catalog using the "consultar_productos" tool when necessary.',
         '{{locales}}': localesText,
         '{{encuentros}}': encuentrosText,
+        '{{card_producto}}':
+          '[INSTRUCCIÓN OBLIGATORIA: Aquí debes insertar EXACTAMENTE el texto que dice "PRESENTACIÓN DEL PRODUCTO" obtenido de tu herramienta consultar_productos, sin modificarle ni una sola coma, y usar la herramienta mostrar_imagen_producto]',
       };
 
       // Mapear cada plantilla en replacements

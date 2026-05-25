@@ -232,15 +232,9 @@ export class WhatsappService {
         }
 
         if (matchedProduct) {
-          this.autoReplyWithProductDetails(
-            org.id,
-            contact.id,
-            matchedProduct,
-          ).catch((err) => {
-            this.logger.error(
-              'Error en auto-reply con detalles del producto',
-              err.message,
-            );
+          const contextMsg = `[SISTEMA: El cliente interactuó con el anuncio o ID del producto "${matchedProduct.name}". Precio: ${matchedProduct.currency} ${matchedProduct.price}. Usa la herramienta 'mostrar_imagen_producto' con ID '${matchedProduct.id}' si es necesario, y muéstrale la información del producto.]\n\nEl cliente dice: ${savedBody || 'Hola'}`;
+          this.autoReplyWithGpt(org.id, contact.id, contextMsg).catch((err) => {
+            this.logger.error('Error en auto-reply GPT (con producto)', err.message);
           });
         } else {
           this.autoReplyWithGpt(org.id, contact.id, savedBody).catch((err) => {
