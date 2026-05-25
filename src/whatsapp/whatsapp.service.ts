@@ -570,6 +570,22 @@ export class WhatsappService {
     }
   }
 
+  async clearChat(contactId: string) {
+    try {
+      await this.prisma.message.deleteMany({
+        where: { contactId },
+      });
+      this.logger.log(`🗑️ Historial de chat eliminado para el contacto: ${contactId}`);
+      return { success: true };
+    } catch (error: unknown) {
+      this.logger.error(
+        `Error eliminando chat de ${contactId}`,
+        error instanceof Error ? error.stack : String(error),
+      );
+      throw error;
+    }
+  }
+
   async createContact(
     name: string,
     phoneNumber: string,

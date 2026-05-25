@@ -94,6 +94,18 @@ export class WhatsappController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Delete('messages/:contactId')
+  async clearChat(@Param('contactId') contactId: string, @Request() req: any) {
+    if (req.user.globalRole !== 'SUPER_ADMIN') {
+      throw new HttpException(
+        'Solo los super administradores pueden borrar el historial',
+        HttpStatus.FORBIDDEN,
+      );
+    }
+    return await this.whatsappService.clearChat(contactId);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Post('messages/:contactId')
   async sendMessage(
     @Param('contactId') contactId: string,
