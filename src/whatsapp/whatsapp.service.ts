@@ -227,7 +227,10 @@ export class WhatsappService {
           this.logger.log(
             `🎯 Disparador de servidor activado por palabra clave: "${matchedTrigger.keyword}"`,
           );
-          await this.sendMessage(contact.id, matchedTrigger.response);
+          const triggerContext = `[SISTEMA: El cliente activó el disparador "${matchedTrigger.keyword}". Debes usar exactamente esta respuesta u obedecer esta instrucción: ${matchedTrigger.response}]\n\nEl cliente dice: ${savedBody}`;
+          this.autoReplyWithGpt(org.id, contact.id, triggerContext).catch((err) => {
+            this.logger.error('Error en auto-reply GPT (Disparador)', err.message);
+          });
           return createdMessage;
         }
 

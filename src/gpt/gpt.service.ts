@@ -95,7 +95,7 @@ REGLAS DE ORO:
         '{{locales}}': localesText,
         '{{encuentros}}': encuentrosText,
         '{{card_producto}}':
-          '[INSTRUCCIÓN OBLIGATORIA: Aquí debes insertar EXACTAMENTE el texto que dice "PRESENTACIÓN DEL PRODUCTO" obtenido de tu herramienta consultar_productos, sin modificarle ni una sola coma, y usar la herramienta mostrar_imagen_producto]',
+          '[INSTRUCCIÓN OBLIGATORIA: Aquí debes estructurar la información del producto (Nombre, Precio, Descripción) en un formato atractivo y vendedor (usando emojis y negritas), y siempre debes usar la herramienta mostrar_imagen_producto para enviar su foto.]',
       };
 
       // Mapear cada plantilla en replacements
@@ -210,17 +210,7 @@ REGLAS DE ORO:
               products
                 .slice(0, 15)
                 .map((p) => {
-                  const template =
-                    (p as any).cardDescription ||
-                    `*🛍️ {{nombre}}*\n\n📝 {{descripcion}}\n\n💵 *Precio:* {{precio}} {{moneda}}\n\n¿Cuántos te gustaría adquirir?`;
-                  const formattedCard = template
-                    .replace(/{{nombre}}/gi, p.name)
-                    .replace(/{{descripcion}}/gi, p.description || '')
-                    .replace(/{{precio}}/gi, String(p.price))
-                    .replace(/{{moneda}}/gi, p.currency)
-                    .replace(/{{stock}}/gi, String(p.stock));
-
-                  return `- ID: ${p.id} | ${p.name} | Precio: ${p.price} ${p.currency}\nPRESENTACIÓN DEL PRODUCTO (Envía este texto exacto al usuario):\n${formattedCard}\n[FOTO DEL PRODUCTO: ${(p as any).cardImageUrl || p.imageUrl || 'SIN FOTO'}]`;
+                  return `- ID: ${p.id} | Nombre: ${p.name} | Precio: ${p.price} ${p.currency} | Descripción: ${p.description || 'Sin descripción'} | Stock: ${p.stock}\n[FOTO DEL PRODUCTO: ${(p as any).cardImageUrl || p.imageUrl || 'SIN FOTO'}]`;
                 })
                 .join('\n\n---\n\n') ||
               'No encontré productos con esos criterios.';
