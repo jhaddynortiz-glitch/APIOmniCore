@@ -95,10 +95,10 @@ REGLAS DE ORO:
         '{{locales}}': localesText,
         '{{encuentros}}': encuentrosText,
         '{{card_producto}}': `[REGLA DEL SISTEMA SOBRE LA TARJETA DEL PRODUCTO]:
-Cuando uses tu herramienta de búsqueda y encuentres un producto específico, la herramienta te devolverá en sus resultados un texto pre-formateado bajo el título "[TARJETA DEL PRODUCTO]". 
+Cuando uses tu herramienta de búsqueda y encuentres un producto específico, la herramienta te devolverá en sus resultados un texto pre-formateado. 
 
 Reglas estrictas al mostrar productos:
-1. NO debes escribir manualmente la tarjeta, ni inventar diseño, precio o beneficios.
+1. NO debes escribir manualmente la tarjeta, ni inventar diseño, precio o beneficios, tampoco debes agregar nada adicional.
 2. DEBES COPIAR EXACTAMENTE el texto que la herramienta te dio bajo "[TARJETA DEL PRODUCTO]" y enviárselo al cliente.
 3. DEBES llamar OBLIGATORIAMENTE a tu herramienta "mostrar_imagen_producto" (pasando el ID del producto) para adjuntar la foto oficial junto a la tarjeta. NUNCA debes usar enlaces markdown.
 4. Antes de mostrar cualquier tarjeta, debes tener identificado un producto real.`,
