@@ -85,6 +85,10 @@ REGLAS DE ORO:
         where: { organizationId: orgId, isActive: true },
       });
 
+      const contact = await this.prisma.contact.findUnique({
+        where: { id: contactId },
+      });
+
       const replacements: Record<string, string> = {
         '{{categorias}}': categoryNames || 'nuestro catálogo',
         '{{categories}}': categoryNames || 'our catalog',
@@ -95,6 +99,8 @@ REGLAS DE ORO:
         '{{locales}}': localesText,
         '{{encuentros}}': encuentrosText,
         '{{card_producto}}': `[REGLA: Para mostrar un producto, copia exactamente la tarjeta que te devuelve la herramienta "consultar_productos" y llama a la herramienta "mostrar_imagen_producto" con su ID. NUNCA inventes tarjetas.]`,
+        '{{telefono}}': contact?.phoneNumber || 'No disponible',
+        '{{cliente}}': contact?.name !== 'Usuario WhatsApp' && contact?.name ? contact.name : 'Cliente',
       };
 
       // Mapear cada plantilla en replacements
