@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { WhatsappService } from '../whatsapp/whatsapp.service';
 
@@ -90,12 +90,41 @@ export class OrdersService {
       await this.notifyAdminsNewOrder(organizationId, order);
     }
 
-    return order;
+    // Keyword matching
+    const keywords = await this.prisma.keywordTrigger.findMany({
+      where: { organizationId }
+    });
+    
+    const productNames = order.items.map(i => i.Product?.name || '').join(' ');
+    const orderText = \`\${order.shippingAddress || ''} \${productNames}\`.toLowerCase();
+    
+    const matchedResponses = keywords
+      .filter(k => orderText.includes(k.keyword.toLowerCase()))
+      .map(k => k.response);
+
+    return {
+      ...order,
+      automaticResponses: matchedResponses,
+    };
   }
 
   async updateStatus(id: string, organizationId: string, status: string, deliveryContactId?: string) {
     const order = await this.findOne(id, organizationId);
     const oldStatus = order.status;
+
+    const validTransitions: Record<string, string[]> = {
+      'PENDING': ['EN_COLA', 'CONFIRMED', 'CANCELLED'],
+      'EN_COLA': ['ASIGNADO', 'CANCELLED'],
+      'ASIGNADO': ['EN_CAMINO', 'CANCELLED'],
+      'EN_CAMINO': ['ENTREGADO', 'CANCELLED'],
+      'CONFIRMED': ['ENTREGADO', 'CANCELLED'],
+      'ENTREGADO': [],
+      'CANCELLED': []
+    };
+
+    if (!validTransitions[oldStatus]?.includes(status)) {
+      throw new BadRequestException(\`Transición de estado inválida de \${oldStatus} a \${status}\`);
+    }
 
     const updatedOrder = await this.prisma.order.update({
       where: { id },

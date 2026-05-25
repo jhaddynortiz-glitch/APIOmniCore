@@ -20,6 +20,7 @@ import { OperationContactsModule } from './operation-contacts/operation-contacts
 import { ConfigModule } from './config/config.module';
 import { UploadController } from './upload/upload.controller';
 import { UploadService } from './upload/upload.service';
+import { KeywordModule } from './keyword/keyword.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { UploadService } from './upload/upload.service';
     ServeStaticModule.forRoot({
       rootPath: join(process.cwd(), 'public'),
     }),
+    KeywordModule,
   ],
   controllers: [AppController, UploadController],
   providers: [AppService, UploadService],
