@@ -96,7 +96,7 @@ export class OrdersService {
     });
     
     const productNames = order.items.map(i => i.Product?.name || '').join(' ');
-    const orderText = \`\${order.shippingAddress || ''} \${productNames}\`.toLowerCase();
+    const orderText = `${order.shippingAddress || ''} ${productNames}`.toLowerCase();
     
     const matchedResponses = keywords
       .filter(k => orderText.includes(k.keyword.toLowerCase()))
@@ -123,7 +123,7 @@ export class OrdersService {
     };
 
     if (!validTransitions[oldStatus]?.includes(status)) {
-      throw new BadRequestException(\`Transición de estado inválida de \${oldStatus} a \${status}\`);
+      throw new BadRequestException(`Transición de estado inválida de ${oldStatus} a ${status}`);
     }
 
     const updatedOrder = await this.prisma.order.update({
@@ -174,20 +174,20 @@ export class OrdersService {
       const clientPhone = order.Contact?.phoneNumber || '';
       const total = order.total;
       const productsText = order.items.map((item: any) => 
-        `- ${item.quantity}x ${item.Product?.name || 'Producto'} (${item.price} Bs)`
+        "- " + item.quantity + "x " + (item.Product?.name || 'Producto') + " (" + item.price + " Bs)"
       ).join('\n');
       
       const address = order.shippingAddress || 'No especificada';
       const mapsLink = (order.lat && order.lng) 
-        ? `\n🌍 *Ubicación GPS:* https://maps.google.com/?q=${order.lat},${order.lng}` 
+        ? "\\n🌍 *Ubicación GPS:* https://maps.google.com/?q=" + order.lat + "," + order.lng 
         : '';
 
-      const messageText = `🔔 *Nuevo Pedido Confirmado (En Cola)*\n\n` +
-                          `👤 *Cliente:* ${clientName} (${clientPhone})\n` +
-                          `💵 *Total:* ${total} Bs\n` +
-                          `📍 *Dirección:* ${address}${mapsLink}\n\n` +
-                          `📦 *Productos:* \n${productsText}\n\n` +
-                          `⚠️ Ingresa a la plataforma para asignar este pedido a un repartidor.`;
+      const messageText = "🔔 *Nuevo Pedido Confirmado (En Cola)*\n\n" +
+                          "👤 *Cliente:* " + clientName + " (" + clientPhone + ")\n" +
+                          "💵 *Total:* " + total + " Bs\n" +
+                          "📍 *Dirección:* " + address + mapsLink + "\n\n" +
+                          "📦 *Productos:* \n" + productsText + "\n\n" +
+                          "⚠️ Ingresa a la plataforma para asignar este pedido a un repartidor.";
 
       for (const admin of admins) {
         const adminContact = await this.whatsappService.createContact(admin.name, admin.phoneNumber, organizationId);
@@ -210,20 +210,20 @@ export class OrdersService {
       const clientPhone = order.Contact?.phoneNumber || '';
       const total = order.total;
       const productsText = order.items.map((item: any) => 
-        `- ${item.quantity}x ${item.Product?.name || 'Producto'} (${item.price} Bs)`
+        "- " + item.quantity + "x " + (item.Product?.name || 'Producto') + " (" + item.price + " Bs)"
       ).join('\n');
       
       const address = order.shippingAddress || 'No especificada';
       const mapsLink = (order.lat && order.lng) 
-        ? `\n🌍 *Ubicación GPS:* https://maps.google.com/?q=${order.lat},${order.lng}` 
+        ? "\\n🌍 *Ubicación GPS:* https://maps.google.com/?q=" + order.lat + "," + order.lng 
         : '';
 
-      const messageText = `🛵 *Pedido Asignado para Entrega*\n\n` +
-                          `👤 *Cliente:* ${clientName} (${clientPhone})\n` +
-                          `📍 *Dirección de Entrega:* ${address}${mapsLink}\n\n` +
-                          `📦 *Productos:* \n${productsText}\n` +
-                          `💵 *Monto a Cobrar:* ${total} Bs\n\n` +
-                          `⚠️ Por favor, reporta cuando el pedido haya sido entregado.`;
+      const messageText = "🛵 *Pedido Asignado para Entrega*\n\n" +
+                          "👤 *Cliente:* " + clientName + " (" + clientPhone + ")\n" +
+                          "📍 *Dirección de Entrega:* " + address + mapsLink + "\n\n" +
+                          "📦 *Productos:* \n" + productsText + "\n" +
+                          "💵 *Monto a Cobrar:* " + total + " Bs\n\n" +
+                          "⚠️ Por favor, reporta cuando el pedido haya sido entregado.";
 
       const driverContact = await this.whatsappService.createContact(driver.name, driver.phoneNumber, organizationId);
       await this.whatsappService.sendMessage(driverContact.id, messageText);

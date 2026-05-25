@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1779668642405" clover="3.2.0">
-  <project timestamp="1779668642406" name="All files">
-    <metrics statements="1115" coveredstatements="115" conditionals="557" coveredconditionals="67" methods="249" coveredmethods="11" elements="1921" coveredelements="193" complexity="0" loc="1115" ncloc="1115" packages="21" files="58" classes="58"/>
+<coverage generated="1779669177011" clover="3.2.0">
+  <project timestamp="1779669177012" name="All files">
+    <metrics statements="1180" coveredstatements="137" conditionals="619" coveredconditionals="82" methods="263" coveredmethods="15" elements="2062" coveredelements="234" complexity="0" loc="1180" ncloc="1180" packages="21" files="59" classes="59"/>
     <package name="src">
       <metrics statements="43" coveredstatements="9" conditionals="6" coveredconditionals="3" methods="4" coveredmethods="3"/>
       <file name="app.controller.ts" path="D:\omnicore\APIOmniCore\src\app.controller.ts">
@@ -241,9 +241,9 @@
       </file>
       <file name="categories.service.ts" path="D:\omnicore\APIOmniCore\src\categories\categories.service.ts">
         <metrics statements="14" coveredstatements="3" conditionals="6" coveredconditionals="3" methods="6" coveredmethods="0"/>
-        <line num="1" count="2" type="stmt"/>
-        <line num="2" count="2" type="stmt"/>
-        <line num="5" count="2" type="stmt"/>
+        <line num="1" count="3" type="stmt"/>
+        <line num="2" count="3" type="stmt"/>
+        <line num="5" count="3" type="stmt"/>
         <line num="6" count="0" type="cond" truecount="3" falsecount="1"/>
         <line num="9" count="0" type="stmt"/>
         <line num="16" count="0" type="stmt"/>
@@ -261,19 +261,19 @@
       <metrics statements="21" coveredstatements="7" conditionals="8" coveredconditionals="1" methods="2" coveredmethods="0"/>
       <file name="crypto.util.ts" path="D:\omnicore\APIOmniCore\src\common\utils\crypto.util.ts">
         <metrics statements="21" coveredstatements="7" conditionals="8" coveredconditionals="1" methods="2" coveredmethods="0"/>
-        <line num="1" count="2" type="stmt"/>
-        <line num="3" count="2" type="stmt"/>
-        <line num="4" count="2" type="cond" truecount="1" falsecount="1"/>
-        <line num="5" count="2" type="stmt"/>
-        <line num="6" count="2" type="stmt"/>
-        <line num="8" count="2" type="stmt"/>
+        <line num="1" count="3" type="stmt"/>
+        <line num="3" count="3" type="stmt"/>
+        <line num="4" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="5" count="3" type="stmt"/>
+        <line num="6" count="3" type="stmt"/>
+        <line num="8" count="3" type="stmt"/>
         <line num="9" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="10" count="0" type="stmt"/>
         <line num="11" count="0" type="stmt"/>
         <line num="12" count="0" type="stmt"/>
         <line num="13" count="0" type="stmt"/>
         <line num="14" count="0" type="stmt"/>
-        <line num="17" count="2" type="stmt"/>
+        <line num="17" count="3" type="stmt"/>
         <line num="18" count="0" type="cond" truecount="0" falsecount="4"/>
         <line num="19" count="0" type="stmt"/>
         <line num="20" count="0" type="stmt"/>
@@ -337,13 +337,13 @@
       </file>
       <file name="gpt.service.ts" path="D:\omnicore\APIOmniCore\src\gpt\gpt.service.ts">
         <metrics statements="71" coveredstatements="7" conditionals="65" coveredconditionals="12" methods="8" coveredmethods="0"/>
-        <line num="1" count="2" type="stmt"/>
-        <line num="2" count="2" type="stmt"/>
-        <line num="3" count="2" type="stmt"/>
-        <line num="4" count="2" type="stmt"/>
-        <line num="5" count="2" type="stmt"/>
-        <line num="6" count="2" type="stmt"/>
-        <line num="9" count="2" type="stmt"/>
+        <line num="1" count="3" type="stmt"/>
+        <line num="2" count="3" type="stmt"/>
+        <line num="3" count="3" type="stmt"/>
+        <line num="4" count="3" type="stmt"/>
+        <line num="5" count="3" type="stmt"/>
+        <line num="6" count="3" type="stmt"/>
+        <line num="9" count="3" type="stmt"/>
         <line num="10" count="0" type="stmt"/>
         <line num="12" count="0" type="stmt"/>
         <line num="28" count="0" type="cond" truecount="6" falsecount="2"/>
@@ -607,7 +607,7 @@
       </file>
     </package>
     <package name="src.orders">
-      <metrics statements="21" coveredstatements="0" conditionals="4" coveredconditionals="0" methods="6" coveredmethods="0"/>
+      <metrics statements="86" coveredstatements="22" conditionals="66" coveredconditionals="15" methods="20" coveredmethods="4"/>
       <file name="orders.controller.ts" path="D:\omnicore\APIOmniCore\src\orders\orders.controller.ts">
         <metrics statements="15" coveredstatements="0" conditionals="4" coveredconditionals="0" methods="6" coveredmethods="0"/>
         <line num="1" count="0" type="stmt"/>
@@ -634,6 +634,74 @@
         <line num="4" count="0" type="stmt"/>
         <line num="5" count="0" type="stmt"/>
         <line num="13" count="0" type="stmt"/>
+      </file>
+      <file name="orders.service.ts" path="D:\omnicore\APIOmniCore\src\orders\orders.service.ts">
+        <metrics statements="65" coveredstatements="22" conditionals="62" coveredconditionals="15" methods="14" coveredmethods="4"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="2" count="1" type="stmt"/>
+        <line num="3" count="1" type="stmt"/>
+        <line num="6" count="1" type="stmt"/>
+        <line num="8" count="3" type="cond" truecount="6" falsecount="2"/>
+        <line num="9" count="3" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="31" count="2" type="stmt"/>
+        <line num="45" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="46" count="2" type="stmt"/>
+        <line num="65" count="0" type="stmt"/>
+        <line num="67" count="0" type="stmt"/>
+        <line num="72" count="0" type="stmt"/>
+        <line num="89" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="90" count="0" type="stmt"/>
+        <line num="94" count="0" type="stmt"/>
+        <line num="98" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="99" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="101" count="0" type="stmt"/>
+        <line num="102" count="0" type="stmt"/>
+        <line num="103" count="0" type="stmt"/>
+        <line num="105" count="0" type="stmt"/>
+        <line num="112" count="2" type="stmt"/>
+        <line num="113" count="2" type="stmt"/>
+        <line num="115" count="2" type="stmt"/>
+        <line num="125" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="126" count="1" type="stmt"/>
+        <line num="129" count="1" type="stmt"/>
+        <line num="147" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="148" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="149" count="1" type="stmt"/>
+        <line num="150" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="151" count="0" type="stmt"/>
+        <line num="155" count="1" type="stmt"/>
+        <line num="159" count="0" type="stmt"/>
+        <line num="160" count="0" type="stmt"/>
+        <line num="166" count="1" type="stmt"/>
+        <line num="167" count="1" type="stmt"/>
+        <line num="171" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="173" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="174" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="175" count="0" type="stmt"/>
+        <line num="176" count="0" type="stmt"/>
+        <line num="177" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="180" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="181" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="185" count="0" type="stmt"/>
+        <line num="192" count="0" type="stmt"/>
+        <line num="193" count="0" type="stmt"/>
+        <line num="194" count="0" type="stmt"/>
+        <line num="197" count="1" type="stmt"/>
+        <line num="202" count="0" type="stmt"/>
+        <line num="203" count="0" type="stmt"/>
+        <line num="207" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="209" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="210" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="211" count="0" type="stmt"/>
+        <line num="212" count="0" type="stmt"/>
+        <line num="213" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="216" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="217" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="221" count="0" type="stmt"/>
+        <line num="228" count="0" type="stmt"/>
+        <line num="229" count="0" type="stmt"/>
+        <line num="231" count="0" type="stmt"/>
       </file>
     </package>
     <package name="src.organizations">
@@ -690,13 +758,13 @@
       </file>
       <file name="prisma.service.ts" path="D:\omnicore\APIOmniCore\src\prisma\prisma.service.ts">
         <metrics statements="16" coveredstatements="11" conditionals="2" coveredconditionals="0" methods="3" coveredmethods="1"/>
-        <line num="1" count="7" type="stmt"/>
-        <line num="2" count="7" type="stmt"/>
-        <line num="3" count="7" type="stmt"/>
-        <line num="4" count="7" type="stmt"/>
-        <line num="6" count="7" type="stmt"/>
-        <line num="7" count="7" type="stmt"/>
-        <line num="10" count="7" type="stmt"/>
+        <line num="1" count="8" type="stmt"/>
+        <line num="2" count="8" type="stmt"/>
+        <line num="3" count="8" type="stmt"/>
+        <line num="4" count="8" type="stmt"/>
+        <line num="6" count="8" type="stmt"/>
+        <line num="7" count="8" type="stmt"/>
+        <line num="10" count="8" type="stmt"/>
         <line num="12" count="1" type="stmt"/>
         <line num="13" count="1" type="stmt"/>
         <line num="17" count="1" type="stmt"/>
@@ -738,9 +806,9 @@
       </file>
       <file name="products.service.ts" path="D:\omnicore\APIOmniCore\src\products\products.service.ts">
         <metrics statements="29" coveredstatements="3" conditionals="32" coveredconditionals="3" methods="11" coveredmethods="0"/>
-        <line num="1" count="2" type="stmt"/>
-        <line num="2" count="2" type="stmt"/>
-        <line num="5" count="2" type="stmt"/>
+        <line num="1" count="3" type="stmt"/>
+        <line num="2" count="3" type="stmt"/>
+        <line num="5" count="3" type="stmt"/>
         <line num="6" count="0" type="cond" truecount="3" falsecount="1"/>
         <line num="9" count="0" type="stmt"/>
         <line num="11" count="0" type="cond" truecount="0" falsecount="2"/>
@@ -799,9 +867,9 @@
       </file>
       <file name="prompts.service.ts" path="D:\omnicore\APIOmniCore\src\prompts\prompts.service.ts">
         <metrics statements="19" coveredstatements="3" conditionals="10" coveredconditionals="3" methods="7" coveredmethods="0"/>
-        <line num="1" count="2" type="stmt"/>
-        <line num="2" count="2" type="stmt"/>
-        <line num="5" count="2" type="stmt"/>
+        <line num="1" count="3" type="stmt"/>
+        <line num="2" count="3" type="stmt"/>
+        <line num="5" count="3" type="stmt"/>
         <line num="6" count="0" type="cond" truecount="3" falsecount="1"/>
         <line num="9" count="0" type="stmt"/>
         <line num="16" count="0" type="stmt"/>
@@ -1054,11 +1122,11 @@
       <metrics statements="16" coveredstatements="5" conditionals="4" coveredconditionals="3" methods="5" coveredmethods="0"/>
       <file name="chat.gateway.ts" path="D:\omnicore\APIOmniCore\src\websockets\chat.gateway.ts">
         <metrics statements="13" coveredstatements="5" conditionals="4" coveredconditionals="3" methods="5" coveredmethods="0"/>
-        <line num="1" count="2" type="stmt"/>
-        <line num="8" count="2" type="stmt"/>
-        <line num="9" count="2" type="stmt"/>
-        <line num="18" count="2" type="stmt"/>
-        <line num="19" count="2" type="cond" truecount="3" falsecount="1"/>
+        <line num="1" count="3" type="stmt"/>
+        <line num="8" count="3" type="stmt"/>
+        <line num="9" count="3" type="stmt"/>
+        <line num="18" count="3" type="stmt"/>
+        <line num="19" count="3" type="cond" truecount="3" falsecount="1"/>
         <line num="20" count="0" type="stmt"/>
         <line num="23" count="0" type="stmt"/>
         <line num="27" count="0" type="stmt"/>
@@ -1125,14 +1193,14 @@
       </file>
       <file name="whatsapp.service.ts" path="D:\omnicore\APIOmniCore\src\whatsapp\whatsapp.service.ts">
         <metrics statements="227" coveredstatements="13" conditionals="143" coveredconditionals="9" methods="20" coveredmethods="1"/>
-        <line num="1" count="2" type="stmt"/>
-        <line num="2" count="2" type="stmt"/>
-        <line num="3" count="2" type="stmt"/>
-        <line num="4" count="2" type="stmt"/>
-        <line num="5" count="2" type="stmt"/>
-        <line num="6" count="2" type="stmt"/>
-        <line num="7" count="2" type="stmt"/>
-        <line num="10" count="2" type="stmt"/>
+        <line num="1" count="3" type="stmt"/>
+        <line num="2" count="3" type="stmt"/>
+        <line num="3" count="3" type="stmt"/>
+        <line num="4" count="3" type="stmt"/>
+        <line num="5" count="3" type="stmt"/>
+        <line num="6" count="3" type="stmt"/>
+        <line num="7" count="3" type="stmt"/>
+        <line num="10" count="3" type="stmt"/>
         <line num="11" count="1" type="stmt"/>
         <line num="13" count="1" type="stmt"/>
         <line num="20" count="1" type="cond" truecount="6" falsecount="2"/>
